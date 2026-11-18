@@ -6,8 +6,8 @@
 </p>
 
 <p align="center">
-  <img src="docs/no-game-moves.gif" alt="Moves: drunk, stagger, windmill, electrocute, flinch, ice" width="400">
-  <img src="docs/no-game-action.gif" alt="Action: shove, knocked down, shot, blast, wrecking ball, high fall" width="400">
+  <img src="docs/no-game-moves.webp" alt="Moves: drunk, stagger, windmill, electrocute, flinch, ice" width="400" height="400">
+  <img src="docs/no-game-action.webp" alt="Action: shove, knocked down, shot, blast, wrecking ball, high fall" width="400" height="400">
 </p>
 <p align="center"><sub>Everything above was filmed in this fork with no game files present.</sub></p>
 
