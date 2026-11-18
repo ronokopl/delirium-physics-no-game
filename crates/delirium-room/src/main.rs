@@ -5350,12 +5350,21 @@ fn load(a: &[String], args: &[String], game_dir: Option<&str>, script: VecDeque<
     NM.store(if xrt == "wilma" { delirium::nmrs::MARGE } else { delirium::nmrs::HOMER }, std::sync::atomic::Ordering::Relaxed);
     let agility = personality.as_deref().and_then(|t| t.lines().map(|l| l.split(',').map(str::trim).collect::<Vec<_>>())
         .find(|c| c.len() > 7 && c[0].eq_ignore_ascii_case(model)).and_then(|c| c[7].parse::<u8>().ok())).unwrap_or(3);
-    let weapons: Vec<Weapon> = wi.map(|t| delirium_data::weapons::read(&t)).unwrap_or_default();
+    // MODIFIED (not in the original): with no game, the SDK's own default four weapons instead of none.
+    let weapons: Vec<Weapon> = wi.map(|t| delirium_data::weapons::read(&t)).unwrap_or_else(own_weapons);
     let surfaces: Vec<(String, f32, f32)> = mats.as_deref().map(|t| {
         let f = delirium_data::vehicles::read_friction(t);
         *delirium::ragdoll::SURFACES.write().unwrap() = f.clone();
         t.lines().filter(|l| l.starts_with(|c: char| c.is_ascii_alphabetic())).zip(f).map(|(l, [fr, el])| (l.split_whitespace().next().unwrap_or("").to_string(), fr, el)).collect()
-    }).unwrap_or_default();
+    // MODIFIED (not in the original): with no game there is no materials.dat, so every block was "DEFAULT" and the back
+    // wall came out grey. These are only the NAMES the room itself asks for (it paints BRICK_WALL orange); the friction
+    // and bounce are the same fallback as before (1.0, 0.1) (1.0, 0.1) for stone; see below.
+    }).unwrap_or_else(|| {
+        // OUR OWN friction guesses (bounce 0.1 everywhere, the engine's fallback): wood a little slippier than stone, metal more.
+        let own = [("DEFAULT", 1.0), ("BRICK_WALL", 1.0), ("CONCRETE", 1.0), ("WOOD", 0.8), ("METAL", 0.6)];
+        *delirium::ragdoll::SURFACES.write().unwrap() = own.iter().map(|s| [s.1, 0.1]).collect();
+        own.iter().map(|s| (s.0.to_string(), s.1, 0.1)).collect()
+    });
     let room = world::Room::new(surfaces, a.iter().position(|x| x == "--stage").and_then(|i| a.get(i + 1)).map_or("room", |s| s.as_str()));
     let map = game_dir.zip(a.iter().position(|x| x == "--map")).and_then(|(g, i)| {
         let v: Vec<f32> = a[i + 1].split(',').filter_map(|x| x.parse().ok()).collect();
@@ -5365,17 +5374,34 @@ fn load(a: &[String], args: &[String], game_dir: Option<&str>, script: VecDeque<
     let arg = |i: usize, env: &str| pos.get(i - 1).cloned().or_else(|| std::env::var(env).ok());
     let from_game = |rpf: &str, p: &str| game_dir.and_then(|g| archive(g, rpf, &[p]).pop().flatten());
     let bpath = arg(2, "NM_BUILD");
-    if game_dir.is_none() && bpath.is_none() && arg(1, "XRT").is_none() {
-        pick_game(args);
-    }
-    let Some(d) = arg(1, "XRT").map(|x| std::fs::read(&x).unwrap_or_else(|e| panic!("{x}: {e}")))
-        .or_else(|| from_game("xbox360.rpf", &format!("data/naturalmotion/{xrt}.xrt"))).filter(|_| bpath.is_some() || game_dir.is_some()) else {
-        eprintln!("usage: delirium-room <fred.xrt> <build.txt> [taskparams.txt] [--game <game dir>] [--script file]   (or env XRT, NM_BUILD, TP;");
-        eprintln!("       with --game and no XRT / NM_BUILD / TP, fred.xrt, Homer's body and taskparams.txt come out of the game's files)");
-        std::process::exit(2);
+    // MODIFIED (not in the original): with no game and no character files, our own stand-in character
+    // (homer-own.json, or the file DELIRIUM_CHARACTER names) instead of asking for the game.
+    let own = (game_dir.is_none() && bpath.is_none() && arg(1, "XRT").is_none()).then(|| {
+        let _ = args;
+        let t = std::env::var("DELIRIUM_CHARACTER").ok().map(|p| std::fs::read_to_string(&p).unwrap_or_else(|e| panic!("{p}: {e}")))
+            .unwrap_or_else(|| OWN_CHARACTER.to_string());
+        delirium_physics::character::Character::parse(&t).unwrap_or_else(|e| panic!("our own character: {e}"))
+    });
+    let d = if own.is_some() { vec![] } else {
+        let Some(d) = arg(1, "XRT").map(|x| std::fs::read(&x).unwrap_or_else(|e| panic!("{x}: {e}")))
+            .or_else(|| from_game("xbox360.rpf", &format!("data/naturalmotion/{xrt}.xrt"))).filter(|_| bpath.is_some() || game_dir.is_some()) else {
+            eprintln!("usage: delirium-room <fred.xrt> <build.txt> [taskparams.txt] [--game <game dir>] [--script file]   (or env XRT, NM_BUILD, TP;");
+            eprintln!("       with --game and no XRT / NM_BUILD / TP, fred.xrt, Homer's body and taskparams.txt come out of the game's files)");
+            std::process::exit(2);
+        };
+        d
     };
-    delirium::nmrs::load(nm(), &d);
+    match &own {
+        Some(c) => { let (j, p, m, s) = c.asset(); delirium::nmrs::set(nm(), j, p, m, s); }
+        None => delirium::nmrs::load(nm(), &d),
+    }
     let (build, frames, getup) = match (&bpath, game_dir) {
+        _ if own.is_some() => {
+            let (b, f) = own.as_ref().and_then(|c| c.build()).unwrap_or_else(|| panic!("our own character has no build"));
+            // MODIFIED (not in the original): our own stand-in clips (get-up, idle, walk, run, sprint, gun, punch) where there were none
+            let clips = getup::Clips::own(&b, &f);
+            (b, f, Some(clips))
+        }
         (Some(p), _) => {
             let (b, f) = Build::undump(&std::fs::read_to_string(p).unwrap_or_else(|e| panic!("{p}: {e}")));
             let getup = game_dir.and_then(|g| getup::Clips::load(g, &b).map_err(|e| eprintln!("get-up clips: {e}")).ok());
@@ -5430,7 +5456,10 @@ fn load(a: &[String], args: &[String], game_dir: Option<&str>, script: VecDeque<
         world.add_chunk(SNAP_CHUNK, &p, &t, &m);
     }
     let tp = arg(3, "TP").and_then(|p| std::fs::read_to_string(p).ok())
-        .or_else(|| from_game("common.rpf", "data/taskparams.txt").map(|d| String::from_utf8_lossy(&d).into_owned())).map_or_else(TaskParams::default, |t| delirium_data::taskparams::read(&t));
+        .or_else(|| from_game("common.rpf", "data/taskparams.txt").map(|d| String::from_utf8_lossy(&d).into_owned()))
+        // MODIFIED (not in the original): with no game, our own stand-in task parameters (taskparams-own.txt).
+        .or_else(|| own.is_some().then(|| OWN_TASKPARAMS.to_string()))
+        .map_or_else(TaskParams::default, |t| delirium_data::taskparams::read(&t));
     let mut agent = Agent::new(&build, Ragdoll::new(&build, &frames, Vec3::ZERO), Quat::IDENTITY, 0.3);
     if script.is_empty() && !args.iter().any(|a| a == "--headless") {
         let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.subsec_nanos() | 1);
@@ -5451,6 +5480,45 @@ thread_local! {
     static PEDS: std::cell::RefCell<std::collections::HashMap<&'static str, (Build, Vec<Transform>, Option<getup::Clips>)>> = Default::default();
 }
 
+/// MODIFIED (not in the original): our own stand-in for the game's character file and body.
+static OWN_CHARACTER: &str = include_str!("homer-own.json");
+/// MODIFIED (not in the original): our own stand-in for the game's taskparams.txt, only the sets the engine has no
+/// fallback of its own for (it would otherwise run them on zeros).
+static OWN_TASKPARAMS: &str = include_str!("taskparams-own.txt");
+/// MODIFIED (not in the original): with no game there is no weaponinfo.xml, so the room gets the four weapons the
+/// SDK ships as its defaults (delirium-sdk/src/lib.rs WEAPONS_DEFAULT: push N s, damage, ms between shots, clip,
+/// accuracy, range). The SDK takes the shotgun's 80 once a blast and the room takes damage for every pellet, so the
+/// shotgun's row here is 80 / 16 a pellet. The other weapons have no values anywhere in the source and keep 50 N s.
+fn own_weapons() -> Vec<Weapon> {
+    let gun = |name: &str, slot: &str, group: &str, force: f32, damage: f32, between: f32, clip: u32, accuracy: f32, range: f32| Weapon {
+        name: name.into(), fire: "INSTANT_HIT".into(), slot: slot.into(), group: group.into(), damage_type: "BULLET".into(),
+        flags: vec!["GUN".into(), "CAN_AIM".into()], force, damage, damage_fps: damage, between_shots: between, clip,
+        accuracy, accuracy_fps: accuracy, range, target_range: range, ..Default::default() };
+    vec![gun("PISTOL", "HANDGUN", "PISTOL_SMALL", 30.0, 25.0, 300.0, 17, 0.5, 50.0),
+         gun("MP5", "SMG", "SMG", 25.0, 15.0, 70.0, 30, 0.5, 50.0),
+         gun("AK47", "RIFLE", "RIFLE_ASSAULT", 45.0, 35.0, 130.0, 30, 0.5, 70.0),
+         gun("SHOTGUN", "SHOTGUN", "SHOTGUN", 90.0, 5.0, 1200.0, 8, 0.1, 35.0),
+         // The rest are OUR OWN guesses, scaled against the SDK's four above (not the game's numbers): a heavy pistol
+         // between the pistol and the rifle, a sniper rifle above the rifle, and what is swung or thrown.
+         gun("DEAGLE", "HANDGUN", "PISTOL_LARGE", 40.0, 40.0, 350.0, 9, 0.5, 60.0),
+         Weapon { accuracy_fps: 0.0, ..gun("SNIPERRIFLE", "SNIPER", "SNIPER", 70.0, 100.0, 400.0, 5, 0.0, 150.0) },
+         Weapon { fire: "PROJECTILE".into(), damage_type: "EXPLOSIVE".into(), ..gun("RLAUNCHER", "HEAVY", "HEAVY", 50.0, 100.0, 1000.0, 1, 0.0, 100.0) },
+         own_melee("UNARMED", &[], 30.0, 10.0),
+         own_melee("BASEBALLBAT", &["MELEE_CLUB"], 60.0, 25.0),
+         own_melee("KNIFE", &["MELEE_BLADE"], 25.0, 35.0),
+         own_thrown("GRENADE", "EXPLOSIVE", 100.0),
+         own_thrown("MOLOTOV", "FIRE", 20.0)]
+}
+/// MODIFIED (not in the original): a stand-in for something swung (see own_weapons).
+fn own_melee(name: &str, flags: &[&str], force: f32, damage: f32) -> Weapon {
+    Weapon { name: name.into(), fire: "MELEE".into(), slot: "MELEE".into(), group: "MELEE".into(), damage_type: "MELEE".into(),
+             flags: flags.iter().map(|f| f.to_string()).collect(), force, damage, damage_fps: damage, between_shots: 600.0, clip: 1, ..Default::default() }
+}
+/// MODIFIED (not in the original): a stand-in for something thrown; its throw speed and fuse stay the room's own.
+fn own_thrown(name: &str, kind: &str, damage: f32) -> Weapon {
+    Weapon { name: name.into(), fire: "PROJECTILE".into(), slot: "THROWN".into(), group: "THROWN".into(), damage_type: kind.into(),
+             flags: vec!["THROWN".into()], force: 50.0, damage, damage_fps: damage, between_shots: 1000.0, clip: 1, ..Default::default() }
+}
 pub static DECISIONS: std::sync::OnceLock<delirium_data::decision::Store> = std::sync::OnceLock::new();
 static NM: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(delirium::nmrs::HOMER);
 fn nm() -> usize {
@@ -5506,6 +5574,13 @@ fn main() {
             false
         }
     });
+    // MODIFIED (not in the original): with no game, the numbers are our own stand-ins (kv-own.txt, or the file
+    // DELIRIUM_NUMBERS names), worked out from how the source uses each one.
+    if game_dir.is_none() && std::env::var("XRT").is_err() {
+        let text = std::env::var("DELIRIUM_NUMBERS").ok().map(|p| std::fs::read_to_string(&p).unwrap_or_else(|e| panic!("{p}: {e}")));
+        let missing = delirium_data::kv::unlock_own(text.as_deref());
+        eprintln!("No game: running on our own stand-in numbers and body, not the game's{}", if missing.is_empty() { String::new() } else { format!(" ({} numbers have no value yet: {:?})", missing.len(), missing) });
+    }
     if let (Some(g), true) = (game_dir.as_deref(), a.iter().any(|x| x == "--find-stairs")) {
         let meshes = map::load(g, Vec2::ZERO, 0.0).unwrap_or_else(|e| panic!("map: {e}"));
         for (c, n, lo, hi) in map::stairs(&meshes).iter().take(60) {
@@ -5561,6 +5636,11 @@ fn main() {
     if let Some(n) = headless_steps {
         return headless(sim, n);
     }
+    // MODIFIED (not in the original): with no game, start with the look of Delirium's own docs pictures (docs/playroom.png):
+    // plain grey sky and a hard sun with black shadows. Saved settings still win over these.
+    if delirium_data::kv::own() {
+        (sim.sky, sim.soft) = (0, false);
+    }
     sim.defaults = settings(&sim);
     sim.safe = safe;
     if safe {
@@ -5569,7 +5649,7 @@ fn main() {
     } else if sim.script.is_empty() {
         load_settings(&mut sim);
     }
-    sim.say(format!("weaponinfo.xml: {} weapons{}", sim.weapons.len(), if sim.weapons.is_empty() { " (--game <dir> reads it; impulses 50 N s)" } else { "" }));
+    sim.say(format!("weaponinfo.xml: {} weapons{}", sim.weapons.len(), if sim.weapons.is_empty() { " (--game <dir> reads it; impulses 50 N s)" } else if delirium_data::kv::own() { " (no game: the SDK's default four; the rest hit with 50 N s)" } else { "" }));
 
     let systems = (keys, console, viewports, mouse, scripted, step, switch, scene, (apply_look, god_rays, glass_light, fire_view), video, follow_floor, bodies, face_view, props, car_mesh, pusher_mesh, taxi_mesh, gun_view, (draw, holo), smooth).chain();
     let mut app = App::new();

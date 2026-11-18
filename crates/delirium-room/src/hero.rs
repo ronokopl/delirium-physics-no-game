@@ -16,6 +16,8 @@ const SWIM_ROOT: f32 = 1.35;
 const SWIM_SPEEDS: [f32; 3] = [0.9, 1.4, 2.0];
 
 pub struct Hero {
+    /// MODIFIED (not in the original): how far into the stand-in punch he is (no fight data).
+    own_punch: Option<f32>,
     pub feet: Vec3,
     pub yaw: f32,
     pub vel: Vec3,
@@ -61,7 +63,7 @@ impl Hero {
     pub fn new(clips: &Clips, homer: Vec3, fwd: Vec3) -> Hero {
         let speed = |c: usize| (clips.pose(c, 1.0)[0].0 - clips.pose(c, 0.0)[0].0).truncate().length() / clips.duration(c).max(0.01);
         let feet = (homer + fwd * 1.5).with_z(0.0);
-        let mut n = Hero { feet, yaw: (-fwd.y).atan2(-fwd.x), vel: Vec3::ZERO, clip: getup::IDLE, phase: 0.0, fight: Default::default(), pad: Default::default(),
+        let mut n = Hero { own_punch: None, feet, yaw: (-fwd.y).atan2(-fwd.x), vel: Vec3::ZERO, clip: getup::IDLE, phase: 0.0, fight: Default::default(), pad: Default::default(),
                            press: 0, keys: 0, scripted: 0, clock: 0.0, ai: None, foe_pad: None, foe_task: None, rand: Default::default(), bones: vec![],
                            speeds: [speed(getup::WALK()), speed(getup::WALK() + 1), speed(getup::WALK() + 2)],
                            caps: vec![], last: vec![], dt: 0.0, stagger: 0.0, go: (Vec3::ZERO, 0),
@@ -166,7 +168,26 @@ impl Hero {
             clips.fight_clip(&d.stance_key(-1, 0x0F)?).map(|c| c.0)
         });
         let playing = self.fight.mv.as_ref().and_then(|m| Some((clips.fight_clip(m.key.as_deref()?)?.0, m.phase())));
-        if let Some((c, phase)) = playing {
+        // MODIFIED (not in the original): with no fight data the attack button plays the stand-in punch; it lands
+        // on Homer when he is within arm's reach as the arm comes out.
+        let mut own = None;
+        if let (None, Some(c)) = (fight.as_deref(), clips.own_punch()) {
+            let bits = std::mem::take(&mut self.press) | self.keys | self.scripted;
+            if bits & melee::ATTACK_BIT() != 0 && self.own_punch.is_none() {
+                self.own_punch = Some(0.0);
+            }
+            if let Some(t) = self.own_punch {
+                let (d, to) = (clips.duration(c), t + dt);
+                if t < 0.24 && to >= 0.24 && homer.is_some_and(|(f, ..)| (f - self.feet).with_z(0.0).length() < 1.3) {
+                    hit = Some(Hit::Swing(10.0, self.fist.0, self.facing() * MELEE_PUSH));
+                }
+                self.own_punch = (to < d).then_some(to);
+                own = Some((c, (to / d).min(1.0)));
+            }
+        }
+        if let Some((c, phase)) = own {
+            (self.clip, self.phase, self.vel) = (c, phase, Vec3::ZERO);
+        } else if let Some((c, phase)) = playing {
             let heading = self.yaw - std::f32::consts::FRAC_PI_2;
             let from = was.filter(|w| w.0 == c && !self.fight.started).map_or(0.0, |w| w.1);
             let at = clips.mover(c, phase);

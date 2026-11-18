@@ -1,0 +1,68 @@
+118	0.02	medium	highFall fowardVelRotation / hfFowardVelCompOnAngle = -0.02 (its neighbours 0.18 and 0.05 match); contact accept gap < 0.02 (Bullet breaking threshold); 4 cm posts; shares storage with slot 653
+119	0.6	high	armsWindmillAdaptive amplitude 0.6, balanceAbortThreshold 0.6, ascending probe table 0/0.3/0.6/0.9/1.2; pinned in CORRECTIONS
+120	12345	low	seed of an LCG (1664525/1013904223); any non-zero value works, real one unknown
+123	3.14	medium	armPhase doc says (3.14); sibling phaseOffset keeps std::f32::consts::PI un-slotted, so this was a typed literal, most likely 3.14 (pi itself is functionally the same)
+124	0.85	medium	dot-product thresholds (<1), Bruiser thigh/spine scale next to 0.6/0.7/0.8/0.9, torso stiffness factor between legs 0.6 and arms, rope x just outside the 0.8 plank; 0.75/0.8/0.9/0.95 are other slots
+125	0.12	medium	head capsule radius after limb radii 0.07/0.06/0.05; neck/pelvis joint cap as fraction of leg length; wound and wall offsets ~12 cm
+126	14.0	high	Param docs '(14)' three times; f*14 clamped to whole 14 in vehicles.rs
+128	3.5	high	8 blocks at -x+i are symmetric only for 3.5; bigstairs side walls 7 m = 6 m top + 1 m (centre 3.5, half 3.5)
+129	0.16	low	injuredOnGround strong roll factor, doc 'about twice as hard' as slot 130
+130	0.08	low	jump sink time below the 0.1 s push and 0.3 s crouch; foot-planted height; crouch = rand*x+0.02 vs 0.05 test; small force factor (chest uses 0.04)
+131	0.03	medium	coping box of half 0.0305 set 0.03 in from the lip (0.5 mm proud, z-fight margin); plank/rail half thickness; joint limit margin; jump lift-off height; shares storage with slot 525
+132	0.55	high	upperBodyFlinch backBendAmount -0.55 and rollDownStairs forcemag 0.55 (NM defaults)
+133	0.04	medium	collision MARGIN (Bullet/RAGE convex margin 0.04), above the 0.02 accept gap
+134	0.001	high	milliseconds to seconds (ms as f32 * x); 1 - health*0.001 for health 0..1000; epsilons; shares storage with slot 1069
+135	0.33	medium	named 'third' in ped.rs; a single literal (exact thirds are written 1.0/3.0 elsewhere), so 0.33 rather than 0.33333334
+136	1.2	high	anchor confirmed: speed doc (1.2), angVelThreshold (1.2,3,1.2), probe table top 1.2
+137	9.0	high	anchor confirmed: (x*9+v)*0.1 running average, bodyBalance stiffness 9, catchFall torso 9, stiffnessDecayTarget 9
+138	1.1	high	buoyancy doc (1.1); armsOutOnPushTimeout 1.1; SOR 1.1
+139	16.0	high	(v*16).round()*kv77 is rounding to sixteenths; leg stiffness 16 as docs suggest; clamp(1,16)
+140	0.35	high	spineTwistExcess doc (0.35); catchFall forwardMaxArmOffset 0.35
+141	2.25	high	wave time doc (2.25 s)
+142	0.18	high	wave size doc (0.18 m); highFall aimAngleBase 0.18; stair riser 0.18
+143	0.005	low	hand inertia per kg (r about 7 cm) in a project-written grip spring; exact value unknown
+144	1.7	low	secondary wobble frequency / per-joint phase step; only needs to be an odd-ish number above 1
+145	0.24	low	hands at across*(0.12 - x*i): symmetric about the head for 0.24; also an arm offset next to -0.2
+146	0.06	high	upperBodyFlinch handDistanceFrontBack 0.06; forearm/foot capsule radius between 0.07 and 0.05
+147	70.0	low	bodyRelax relaxation (percent, not 50 or 100 which are other slots); pad motor 50 + x reaches the 120 small-motor value; wreck distance
+148	3000	low	fall-down stage timeout in ms inside a task that runs 2-10 s; real value unknown
+149	0.723608	high	Bullet penetration-direction table (42 unit vectors), row structure matches exactly
+150	0.525725	high	Bullet penetration-direction table
+151	0.447219	high	Bullet penetration-direction table
+152	0.276388	high	Bullet penetration-direction table
+153	0.850649	high	Bullet penetration-direction table
+154	0.894426	high	Bullet penetration-direction table
+155	0.447216	high	Bullet penetration-direction table
+156	0.447220	high	Bullet penetration-direction table
+157	0.425323	high	Bullet penetration-direction table
+158	0.309011	high	Bullet penetration-direction table
+159	0.850654	high	Bullet penetration-direction table
+160	0.162456	high	Bullet penetration-direction table
+161	0.499995	high	Bullet penetration-direction table
+162	0.262869	high	Bullet penetration-direction table
+163	0.809012	high	Bullet penetration-direction table
+164	0.525738	high	Bullet penetration-direction table
+165	0.850648	high	Bullet penetration-direction table
+166	0.525736	high	Bullet penetration-direction table
+167	0.525730	high	Bullet penetration-direction table
+168	0.850652	high	Bullet penetration-direction table
+169	0.688190	high	Bullet penetration-direction table
+170	0.499997	high	Bullet penetration-direction table
+171	0.951058	high	Bullet penetration-direction table
+172	0.309013	high	Bullet penetration-direction table
+173	0.587786	high	Bullet penetration-direction table
+174	0.809017	high	Bullet penetration-direction table
+176	300.0	low	defaultGrabStrength and also shotMaxTimeToStopLeanL in ms (below the H value; 1000 is slot 82); real value unknown
+177	1.25	low	GrabHelper grabDistance; not 1.0/1.5/2.0 (literal or other slots); real value unknown
+178	2.8	high	grab reachAngle 2.8 next to oneSideReachAngle 1.4 (NM defaults)
+179	1.4	high	anchor confirmed: oneSideReachAngle 1.4, foetal dampingFactor 1.4, armReachAmount 1.4, docs 'head above 1.4 m'
+180	1536	high	512|1024 = either hand grabbed; bike extras mask bits 9-10 after 14, 48, 448; stored in a 512,768,1024,1536,2048,... size table
+181	4096	high	vehicle flag onlyonhighways 0x1000; the one missing pad button bit; island size cap with 4095 beside it
+182	512	high	vehicle flag sports 0x200; sign bit of a 10-bit field (x - 1024); tyre GRIP_130 after 64/128/256
+183	1024	high	vehicle flag delivery 0x400; 10-bit wrap; double exponent test e > 1024
+184	65536	high	vehicle flag ext_gang 0x10000; ped flag after 32768
+185	196608	low	grab-helper flag tested with bit 4, sibling of 0x10000 tested with bit 2; 0x20000 is slot 648 so not that; nothing in this repo sets it
+186	4.5	medium	high ledge block of half-depth 5 centred at y=x must hold the start point at y=0 near its edge; dive speed 4.5 m/s; arm limit beside 5.0
+187	480	high	docs: episodes run 480 steps (8 s) and learn.rs prints '/ 8 s'; as a mask 0x1E0 = taxi extras 5-8
+190	2.2	low	Playroom drunk armsOutOnPushTimeout, longer than the 1.1 default; real value unknown
+192	1.9	high	anchor confirmed: elbowAngleOnContact 1.9, rollDownStairs useArmToSlowDown -1.9, Large/Lanky height 1.90

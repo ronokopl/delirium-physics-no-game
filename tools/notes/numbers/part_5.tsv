@@ -1,0 +1,100 @@
+193	0.125	high	anchor confirmed: turnLeft/RightProb; the six bodyBalance turn probs 0.1+0.2+0.3+0.15+0.125+0.125 sum to 1
+194	9.9	high	armsOutMinLean2 default -9.9 (NM bodyBalance); non-dyadic, found only as a code immediate
+195	85.0	high	msg.rs Param doc: "the twist's range (bodyTwist x 45 / x 85)"; also Bruiser kg (Brawler 80)
+196	8388607	high	RNG mask 0x7FFFFF: (bits & M) as f32 / (1<<23)
+197	4294967295	high	MWC low-word mask 0xFFFFFFFF: (x & M)*A + (x>>32)
+198	1557985959	medium	RAGE mthRandom multiply-with-carry multiplier (seed0*1557985959 + seed1)
+199	0.09	low	FOOT() size / thigh capsule radius (upper arm 0.07, forearm 0.06); non-dyadic
+200	0.42	low	STEP_TIME (s) / melee PLAYING chance; non-dyadic; 0.45, 0.55, 0.6, 0.35 are other slots
+201	13.0	medium	bodyWrithe arm/back/leg stiffness default 13; dyadic; sorted pool puts it above ~9.5 and below ~36
+202	14.14	high	armsWindmillAdaptive armStiffness default 14.14 (bodyStiffness 11 and amplitude 0.6 alongside)
+206	0.075	low	kerb stage half-height (15 cm kerb) and balancer lean_bias; non-dyadic
+207	1.8	low	body height clamp feet.z+1.8 (tuning is for a 1.8 m body), kicker run 1.8 for 0.6 rise, Brute arms / Waddler width; not 1.3 (= kv80)
+208	10.5	low	shotBodyStiffness fallback; dyadic and the integers 6..16 are all other slots
+209	1205	medium	HEAD bone tag 0x4B5 (bone_share literals 0x4C1.. show the BCD-style tag scheme; spine..head table is consecutive)
+210	1204	medium	NECK bone tag 0x4B4 (entry before HEAD in the consecutive spine table)
+211	417	medium	PELVIS bone tag 0x1A1 (table entry just before L_THIGH 0x1A2; legs are 0x1A2-4 / 0x1A7-9)
+212	1201	medium	SPINE1 bone tag 0x4B1 (SPINE 0x4B0 .. HEAD 0x4B5 consecutive)
+213	1203	medium	SPINE3 bone tag 0x4B3
+214	0.12	low	point-gun arm twist range low (non-gang; gang is -0.4..0.2); non-dyadic guess
+215	0.04	low	point-gun arm twist range high (non-gang); non-dyadic guess
+216	10000	low	OnFire task max time ms (min is kv41); lying phase starts at 80% of it
+218	3000	low	upper ms of rand(kv40, X) roll / gun-threat delay; THROWN_FALL_MS
+219	150.0	low	health threshold for the balance bar (health 100..200); dyadic
+220	16.0	medium	upper bound of valid leg stiffness 6..=16 (NM stiffness tops at 16); dyadic
+221	500.0	low	random start offset t = X*random for windmill phase / pedal noise; dyadic; 100 and 1000 are other slots
+222	0.58	low	windmill minimum elbow bend the elbow is driven up to at 15 rad/s; non-dyadic guess
+223	0.97	low	per-tick decay of every effector's strength and damping once both windmill arms have hit; non-dyadic just under 1
+225	0.8888889	low	catchFall torso = bodyStiffness*8/9 (sibling legs factor is the known 5.5/9 = 0.6111111)
+226	1.6666666	low	catchFall arms = bodyStiffness*15/9 (arms 15 at stiffness 9); also flinch ramp rate per second
+227	998.9	low	lower edge of the magic armsOutOnPushTimeout window (drunk); sorted pool: adjacent to 228, between ~511 and ~3000; assumes slot 190 = 999.0
+228	999.1	low	upper edge of the same window; slot 190 (DRUNK_TIMEOUT, dyadic) must lie strictly between 227 and 228
+229	0.70710677	medium	1/sqrt(2): normalises (m.c -+ m.b) of two orthonormal axes; melee AWAY = cos 45 deg
+230	1.1920929e-07	high	2^-23: (bits & 0x7FFFFF) * X; same exe address as slot 766 so same f32
+231	1.7	low	bodyFoetal shoulder lean1 (arms folded in front, elbow 2.0); non-dyadic; 1.5, 1.6, 1.75, 1.9 are other slots
+232	0.08	low	heel-side clamp of COM offset (-0.08 .. 0.15 toe side), street pavement half-height (16 cm), brace reachAbsorbtionTime default
+233	95.0	medium	braceForImpact max car speed to grab (later games: maxGrabCarVelocity 95); engine fire: 95 - 3*speed < rate(30..100); dyadic
+234	0.16	low	hand-separation random range (ch.mode 2); sorted pool position ~0.16, between 1/12 and 0.2
+235	0.175	medium	step riser / post half-height: 2*0.175 = 0.35 rail centre, stairs 5*0.175; with 241 = 0.825 sums to 1
+236	0.21	low	hand-separation random range (default body); sorted pool: first value above 0.20000005
+237	1.25	medium	catchFall arms = bodyStiffness*1.25 (12 -> 15); dyadic; sorted pool between ~1.0 and 4/3
+238	2.8915927	medium	pi - 0.25: mirror of the right-arm test (a - 0.25) for the left arm; fits sorted pool just below ~3
+240	2.9802322e-08	low	0.25 * 2^-23: head look timer 0.25 + rand*0.25 (0.5*2^-23 and 2^-23 are other slots)
+241	0.825	medium	head look point = pos*0.825 + look*0.175; sorted pool: next value above 9/11
+243	3.3	low	decay rate lean /= 1 + dt*k; sorted pool between ~pi and 4.19
+244	4000.0	medium	engine health end -4000 (fire below 0); sorted pool just above the fire steps; noise offset 4000*random
+245	0.45000002	low	writhe spine twist amplitude; f32 computed constant; sorted pool ~0.40-0.48 (e.g. 0.3*1.5)
+246	7.85	low	writhe leg phase factor; sorted pool: above 2*pi (7.85 = 2.5*pi, NM's usual angular speed)
+247	0.72	low	writhe hip-twist frequency factor sin(g*X+1); sorted pool ~0.68-0.76; non-dyadic
+248	0.52	medium	highFall crashOrLandCutOff as an angle (later games: "0.52 angle is 0.868 dot"; catchFallCutOff 0.5 likewise); fits sorted pool
+249	200.0	low	train ram damage (car 30), health < 200 -> slow get-up, writhe roll torque; dyadic
+250	0.0000001	low	tiny epsilon (ray parallel test, denominators); sorted pool: third entry, just above slot 256
+251	0.90000004	low	catchFall arm probe length = 1.5 * reach 0.6 in f32; computed constant found only as a code immediate
+252	4.905	low	downward velocity bias for the fall direction (g/2); sorted pool: just above dyadic slot 186 and below 2*pi
+254	5.9604645e-08	medium	0.5 * 2^-23: clav lean2 = rand*0.5 (siblings are the known 0.4*2^-23 and 0.6*2^-23)
+256	0.00000001	low	tiny epsilon (norm^2 guard, +eps in a divisor); sorted pool: second entry, below slot 250
+259	2.7	low	max |twist| / yaw angle before giving up; sorted pool a few entries below 2.8916
+260	0.03	low	skate rail half-thickness (posts are 0.02); also scale of arm pull when touching
+261	450.0	low	pelvis pitch P gain (also x lead for D); dyadic; sorted pool between slot 262 and 511
+262	300.0	low	pelvis roll P gain; dyadic; sorted pool between slots 265 and 261
+263	120.0	low	pelvis roll integral gain; dyadic; sorted pool just below 127.5
+265	256.0	low	pelvis pitch integral gain; dyadic; sorted pool between slots 513 and 262
+266	0.0069444445	medium	1/144 normaliser of the pitch term (roll uses the known 1/288); sorted pool below deg2rad
+267	1.01	low	guard in 1/(X - lift); sorted pool: two entries above ~1.0, below 1.25
+268	0.99	low	near-one threshold (blend weight total, clip nearly done, acos clamp); sorted pool just below 1
+280	9.5	low	ankle desired clamp (effectively inert); dyadic; sorted pool between slots 246 and 201
+283	0.20000002	medium	velocity term factor in stabilise; f32 computed constant sitting between 0.2 and 0.20000005 in the sorted pool
+491	1.6	high	anchor confirmed: Small 1.60 m; elbow pair 1.4/1.6; bearing > 1.6 rad = behind
+492	0.48	low	flinch hands distance in front of spine3; Bruiser leg scale (short legs, Brawler 0.45); 0.55 is slot 132
+493	0.92	low	flinch initial left shoulder lean1 (right uses kv124); non-dyadic guess
+494	0.055000003	medium	turned-away flinch spine lean1 = 0.55*0.1 folded in f32 (pattern: three non-nice f32 values + one nice)
+495	0.11000001	medium	0.55*0.2 folded in f32
+496	0.165	medium	0.55*0.3 folded in f32 (the one product that is a nice decimal, hence the plain slot)
+497	0.22000001	medium	0.55*0.4 folded in f32
+498	0.33	low	time behind after which the turned-away arm pose changes; non-dyadic guess
+499	1.45	low	late turned-away right shoulder lean1; portalwall x offset; code-immediate value, guess
+500	2.2	low	late right elbow; highFall roll hip (other hip 2.25); non-dyadic
+501	1.85	low	late turned-away left shoulder lean1; code-immediate value, guess
+502	2.4	low	late turned-away left elbow; code-immediate value, guess
+503	45.0	high	msg.rs Param doc: "the twist's range (bodyTwist x 45 / x 85)"; default twist_max
+504	3.5	low	fallOverWall per-part force clamp (then x scale x 60); melee SEEK_BEYOND distance; dyadic
+506	1.05	low	Lanky limb factor (Fat 0.95, Stocky 0.9; 1.1 is another slot); fallOverWall left elbow
+507	1.15	low	fallOverWall right elbow (left + 0.1 like the other left/right pairs)
+508	0.66	low	fallOverWall right clavicle factor (left 0.6); sorted pool ~0.62-0.69
+509	2.6	low	fallOverWall right shoulder twist factor (left 2.5; right values are +0.1)
+510	0.88	low	grab closing-time factor when justbrace (0.45 otherwise); sorted pool ~0.86-0.93; 0.9 is another slot
+511	0.38	low	upper clamp of the grab arm IK yaw from reach; non-dyadic guess
+512	144.0	low	wrist strength while holding (12^2); dyadic; sorted pool: just above 127.5
+513	180.0	low	highFall orientation P gain against 60*angvel; dyadic; sorted pool between slots 512 and 265
+515	1.65	low	highFall roll-up armReachAmount (default 1.4; useArmToSlowDown 1.9 here); non-dyadic guess
+516	1.35	low	hip muscle stiffness on landing (knees 1.0); code-immediate value, guess
+517	0.8181818	medium	9/11: balance bodyStiffness 9 from highFall stiffness 11; sorted pool: just below 0.825
+518	0.083333336	high	1/12: legStrength.clamp(1,12)/12; same exe address as slot 571 (box inertia 1/12)
+519	1.55	low	highFall roll second knee offset (first is 1.75); shot fling shoulder lean2 base; guess
+520	1.3636364	low	15/11: catchFall arms 15 from highFall stiffness 11; sorted pool a few entries above 4/3
+521	0.22	low	tilt (rad) of the spine3 frame toward the head; stored negated and the positive form is absent from the exe, so an uncommon value
+522	0.98	low	scale of spine twist limits (spine0 in spineTwist, clamp in headLook); non-dyadic just under 1
+523	0.65	low	pedal centre depth: r = radius - 0.65 keeps the lowest foot point within leg reach; 0.55 and 0.85 are other slots
+524	2108	low	NM_POSE task type id; only compared for equality; every value 3..255 is another slot so >= 256
+525	0.025	low	joint limit margin; same exe address as slot 131 so it must equal slot 131's f32 (coping offset under a 0.0305 radius)
+526	0.001	medium	epsilon; same exe address as slot 72 so it must equal slot 72's f32

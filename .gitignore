@@ -1,2 +1,11 @@
 target/
 learned-preview/
+
+# this fork: local build output, logs and scratch work
+.cargo-home/
+build*.log
+run/
+*.orig
+tools/notes/target/
+tools/notes/learned-preview/
+__pycache__/

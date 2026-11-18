@@ -1,60 +1,76 @@
-> [!IMPORTANT]
-> **You need your own Grand Theft Auto IV: The Complete Edition for PC (Steam, version 1.2.0.59) or the original Xbox 360 disc (not included).** Both the Playroom and the SDK need it: the engine's numbers are read from your own copy's program (the PC version's GTAIV.exe, or default.xex on the Xbox 360 disc), and the character, animations and settings from your own game files. Use the Xbox 360 disc image (.iso) or the PC game folder (the one with GTAIV.exe in it); the disc's key is fetched from the internet the first time. The PS3 version isn't supported for now. No game files or game numbers come with it, and neither the Playroom nor the SDK runs without them. For integrating the engine into another game, see [For developers](#for-developers).
+<h1 align="center">Delirium Physics: No Game Needed</h1>
 
 <p align="center">
-  <img src="docs/montage.gif" alt="Taser, skeleton, damage, Homers on fire, splash, coloured light, 50 Homers" width="480">
-  <img src="docs/homer-wave.gif" alt="Homer waving" width="320">
+  <b>The Delirium active-ragdoll playroom, running with no game files at all.</b><br>
+  No Grand Theft Auto IV, no disc image, no assets to find. Build it and play.
 </p>
-<p align="center">
-  <img src="docs/world.gif" alt="The world: box, barrel, taxi, taxi grab, wrecking ball, low wall, ledge, rope bridge" width="260">
-  <img src="docs/moves.gif" alt="Moves: ice, drunk, flinch, electrocute, stagger, windmill" width="260">
-  <img src="docs/weapons.gif" alt="Weapons: pistol to knife" width="260">
-</p>
-<p align="center">
-  <img src="docs/grab.gif" alt="Grabbing Homer by different parts with the mouse and dragging him around" width="400">
-  <img src="docs/skate.gif" alt="Homer skating, bailing into a portal" width="400">
-</p>
-
-# Delirium Physics
-
-A physics playground for an active ragdoll. Homer isn't animated. His muscles keep him standing, so he balances, stumbles, braces, grabs, flails and falls on his own. Push him, shoot him, throw things at him, drop him off a bridge, or step in as Hero and fight him.
-
-Delirium is a reverse-engineered port of Euphoria, NaturalMotion's ragdoll and character physics engine, as it runs in GTA IV: rewritten in Rust from the game's own program code and checked against the running game. It comes with an SDK (C, C++, C#, Python), plugins for Unity, Unreal Engine 5 and Godot 4, and the room you see here. It was written with AI coding tools (Claude). It isn't affiliated with or endorsed by Rockstar Games, Take-Two Interactive or NaturalMotion. An earlier version of this README said the behaviours were written from scratch by separate people; that was wrong, and it has been removed.
 
 <p align="center">
-  <img src="docs/playroom.png" alt="The Playroom: Homer on the left panel's Character tab, his skeleton and joints shown" width="800">
+  <img src="docs/no-game-stumble.gif" alt="Homer is shoved twice, stumbles, catches himself and stands again" width="440">
 </p>
+<p align="center">
+  <img src="docs/no-game-getup-front.gif" alt="Homer gets up from lying on his front" width="330">
+  <img src="docs/no-game-getup-back.gif" alt="Homer gets up from lying on his back" width="330">
+</p>
+<p align="center"><sub>Everything above was filmed in this fork with no game files present.</sub></p>
 
-## Releases and source code
+> [!NOTE]
+> **This is a modified fork of [Delirium Physics](https://github.com/PVCPC/delirium-physics)** (GPL-3.0-only), based on
+> its 0.7.0 source. It is not the original and is not made or endorsed by its authors. The one change: the original
+> needs your own copy of GTA IV to start, and this fork does not. What was changed, and how close the result is, is
+> written up in [docs/no-game.md](docs/no-game.md).
 
-- **Want to try it?** The files in [Releases](../../releases) provide the compiled **Delirium Playroom**, a playable demonstration of the engine. The Windows release launcher downloads the ready-built room; you don't need to compile the repository.
-- **Want to use it in a mod?** This repository contains the engine source, SDK, language bindings, examples and Playroom source needed to build your own integration. Delirium is meant for mods, and every player needs their own GTA IV: the engine reads its numbers from it. **A mod built with Delirium has the same requirement: each of its players must point it at their own GTA IV.** Don't ship GTA IV's files, or numbers taken out of them, with your mod. You still need to connect it to the target game's character, animation, collision and update systems; it isn't a drop-in mod for every game.
+## No assets required
 
-## What's in it
+The original Delirium reads its numbers, its character, its animations and its weapon settings out of your own
+GTA IV. This fork ships its own stand-ins for all of them, so nothing has to be supplied:
 
-- **Dozens of behaviours**: balance, drunk, catch fall, high fall, roll down stairs, flinch, brace, grab, writhe, smart fall, teeter, stumble, dangle, electrocute, wave and more
-- **Hero mode**: walk around as Hero with fists (punches, combos, heavy attack, kick, block, lock-on) and guns
-- **Stages**: stairs, wall, ledge, rope bridge (the plank snaps!) and trampoline
-- **Toys**: throw balls, boxes and crates, drive a taxi into him, slow motion down to 1/16
-- **Portal mode**: Portal 2's portal gun. Shoot a blue and an orange portal and Homer flies through them, speed and all. Needs your own Portal 2 (see below)
-- **Homer's face**: his eyes look at what hit him, blink, and squint when he's hurt
+| The original reads from GTA IV | This fork uses instead |
+|---|---|
+| About 700 engine numbers | Our own table, worked out from Delirium's source and docs |
+| The character (joints, limits, muscles, masses, shapes) | Our own stand-in body, measured from Delirium's own pictures |
+| Get-up animations | Our own, generated with NVIDIA's Kimodo text-to-motion model and fitted to the body, with hands and feet planted on the floor |
+| Idle, walk, run, sprint, gun and punch animations | Our own, hand-written key poses |
+| Weapon and reaction settings | Our own estimates on top of the SDK's defaults |
 
-## Setup
+**No GTA IV file, and no number taken from one, is in this repository, and none was looked at to make it.**
 
-You need your own copy of the game: Delirium reads the character, animations and settings from it. None of it is included here.
+### What to expect
+
+It is the real Delirium engine code running, on stand-in data. So, honestly:
+
+- **Homer moves differently from the real Delirium.** Many of the numbers, and all of the masses, joint limits and
+  muscle strengths, are estimates. He stands, balances, stumbles, recovers, falls and gets back up, but not exactly
+  as he does with the game's data.
+- **Checked here:** standing and balancing, shoves (a light one he rides out, a hard one floors him), getting up
+  from his front and his back, drunk, stagger, electrocute, flinch, ice, being thrown by a blast, pistol damage.
+- **Missing without the game:** the Hero's fight moves (there is one plain punch instead) and each weapon's own
+  reaction settings.
+- **Not tested here:** grabbing, climbing, the taxi, the other stages and Portal mode.
+- **Want the real thing?** Point it at your own GTA IV exactly as the original does (`--game <folder>`). This fork
+  still supports that, and then uses the game's data instead of the stand-ins.
+
+## Play it
 
 **Windows**
-1. Download `delirium-room.bat` from the latest [release](../../releases).
-2. Drag your Xbox 360 disc image (`.iso`) or PC game folder (the one with `GTAIV.exe` in it) onto it. Or just double-click it, then drop it on the window when the room asks.
-3. The first run downloads the ready-built room (no install, no build) into a folder beside it. After that it starts in seconds, and it remembers your game.
 
-**Safe Mode**: if the room is slow, won't start, or crashes, use `delirium-room-safe.bat` instead (same folder, same way: drag your game onto it). It starts with every graphics setting at its lowest and leaves your saved settings alone until you change one in the menu. On macOS and Linux, `delirium-room-safe.command` (or run `delirium-room --safe`).
+1. Download this repository (green **Code** button → **Download ZIP**) and unpack it, or clone it.
+2. Double-click **`Play Delirium (no game).bat`**.
+3. The first run builds the room, which takes a few minutes and needs [Rust](https://rustup.rs) and Microsoft's free
+   C++ build tools. After that it starts in seconds.
 
-Building it yourself: download this repo and run its `delirium-room.bat`. That offers to install Rust and Microsoft's C++ build tools (free, a few GB) and builds the room in a few minutes.
+Building by hand on any system: `cargo build --release -p delirium-room`, then run `target/release/delirium-room`
+with no arguments. Only Windows has been tried with this fork.
 
-**Portal mode (optional bonus)**: install Portal 2, then open **Interact → Portal 2 · bonus** inside the running room. Paste your Portal 2 installation folder and click **Link folder**, or click **Find Steam install**. The section shows the linked folder and lets you turn the bonus on or off. The portal gun is then in the weapons: left click shoots blue, right click shoots orange. Portal 2 isn't part of startup setup and isn't needed for the base room. No Portal 2 files are included; they're read from your install. The portal maths comes from **Stink-O**'s [Portal 2 Rust Engine](https://github.com/Stink-O/Portal2-rust-engine) (MIT; see [CREDITS](CREDITS.md)).
+## What Delirium is
 
-**macOS / Linux**: download `delirium-room-<version>-macos-arm64.zip` (Apple Silicon) or `delirium-room-<version>-linux-x86_64.tar.gz` from [Releases](https://github.com/PVCPC/delirium-physics/releases/latest), unpack it and run `delirium-room` with your Xbox 360 `.iso` or PC GTA IV game folder. On a Mac it isn't signed: run `xattr -dr com.apple.quarantine .` in its folder first. Or build it yourself: run `delirium-room.command` (install Rust first from [rustup.rs](https://rustup.rs)).
+A physics playground for an active ragdoll. Homer isn't animated. His muscles keep him standing, so he balances,
+stumbles, braces, flails and falls on his own. Push him, shoot him, throw things at him, or step in as Hero.
+
+Delirium is a reverse-engineered port of Euphoria, NaturalMotion's ragdoll and character physics engine, as it runs
+in GTA IV, rewritten in Rust by the [original project](https://github.com/PVCPC/delirium-physics). It comes with an
+SDK (C, C++, C#, Python) and plugins for Unity, Unreal Engine 5 and Godot 4. Neither the original nor this fork is
+affiliated with or endorsed by Rockstar Games, Take-Two Interactive or NaturalMotion.
 
 ## Controls
 
@@ -62,13 +78,6 @@ Building it yourself: download this repo and run its `delirium-room.bat`. That o
 |---|---|
 | **Click** | poke a body part |
 | **Drag** | pull a body part around |
-| **T** while dragging | tie the line to the map there (T cuts the newest, Shift + T all); drag him again while he's tied |
-| **Point at a tied line** | picks it for L, the scroll wheels and T (else the newest) |
-| **F11** | fullscreen on / off (also in Audio / Video) |
-| **K** | tied lines wrap round walls and corners, on / off |
-| **L** | the line: a leash that locks at its length (pink taut, dark blue with slack), or a stretchy rope |
-| **Ctrl + Scroll Wheel** | a rope: up tight (thick, solid, red), down stretchy (thin, dashed, yellow) |
-| **Alt + Scroll Wheel** | a tied line longer or shorter; while dragging, the drag line (he hangs off the pointer) |
 | **Shift + click** | shoot him |
 | **1 / 2 / 3** (or Ctrl + point) | throw a ball, a box or a crate |
 | **Right drag, wheel** | turn and zoom the camera |
@@ -77,38 +86,36 @@ Building it yourself: download this repo and run its `delirium-room.bat`. That o
 | **R** | reset his pose |
 | **X** | stop all behaviours |
 | **H** | hide the panels |
+| **F11** | fullscreen on / off |
 
-Choose reactions under **Reactions** in the left dock. **Scene** contains locations, people and the **Add one taxi** button; **Character** contains Homer and Hero controls. The bottom bar shows Homer's physical speed and acceleration beside the simulation timer. Every shortcut is listed under **Help**.
+Choose reactions under **Reactions** in the left dock. Every shortcut is listed under **Help** in the room.
 
-**Hero mode** (the Hero button):
-
-| | |
-|---|---|
-| **WASD** | walk (Shift run, Ctrl sprint) |
-| **Left click** | attack (click again to combo) |
-| **T / G** | heavy attack / kick |
-| **V** | block |
-| **Hold Z** | lock on to Homer |
-| **1** fists, **2–0** | guns, grenade, molotov |
-| **-** / **=** | bat / knife |
-| **Mouse wheel** | next / previous weapon |
-| **F** | get in or out of the taxi |
+**Hero mode** (the Hero button): **WASD** walk (Shift run, Ctrl sprint), **left click** punch, **1** fists,
+**2–0** guns, **mouse wheel** next / previous weapon.
 
 ## For developers
 
-The Playroom is one application built on Delirium. For a mod, use the engine and SDK below rather than the Playroom executable. The repository includes the source and integration examples; your game's adapter and any required game assets are supplied by your project. The SDK needs the player's own PC GTA IV too: call `nm_unlock` with their `GTAIV.exe` or the Xbox 360 disc's `default.xex` (or the folder either is in) first; until then `nm_init` and `nm_agent_create` fail. The examples read it from the `GTAIV_EXE` environment variable.
-
 - `crates/delirium`: the engine
-- `crates/delirium-sdk`: the C API (`include/delirium_physics.h`), bindings for C++, C# and Python, plugins for Unity, Unreal Engine 5 and Godot 4, with examples
+- `crates/delirium-sdk`: the C API, bindings for C++, C# and Python, plugins for Unity, Unreal Engine 5 and Godot 4
 - `crates/delirium-room`: the room
-- `crates/delirium-data`: readers for the game's file formats
+- `crates/delirium-data`: readers for the game's file formats, and the stand-in number table (`src/kv-own.txt`)
+- `tools/`: this fork's own helpers (filming, the stand-in character, the Kimodo get-up pipeline)
 
-Build by hand: `cargo build --release -p delirium-room`.
+Where the stand-ins live and how each was made: [docs/no-game.md](docs/no-game.md). The original's guides still
+apply to the engine itself: [Modding: start here](docs/start-here.md), [How it works](docs/how-it-works.md),
+[Modding](docs/modding.md). Those guides describe the original, including its GTA IV requirement for the SDK; this
+fork changed the Playroom's start-up, and the SDK's requirement is described in [docs/no-game.md](docs/no-game.md).
 
-Modders: start with [Modding: start here](docs/start-here.md) (the Unity, Unreal and Godot plugins, your first ragdoll in three steps). Full guides: [How it works](docs/how-it-works.md) (the engine, body, step loop and behaviours) and [Modding](docs/modding.md) (each language's quick start, every message and its parameters, Playroom scripting and settings).
+Generating new get-ups needs your own [Kimodo](https://github.com/nv-tlabs/kimodo) install (see
+[docs/no-game.md](docs/no-game.md)); the two in use are already built in.
 
-Maintainers' to-do list: [delirium-todo](https://github.com/PVCPC/delirium-todo) (private; only the maintainers can open it).
+## Credits and license
 
-## License
+- **Delirium Physics** by its original authors: <https://github.com/PVCPC/delirium-physics>. All of the engine, the
+  room and the SDK are theirs. This fork adds the no-game start-up and its stand-in data.
+- **Get-up motions** were generated with NVIDIA's [Kimodo](https://github.com/nv-tlabs/kimodo) (model under the
+  NVIDIA Open Model License; its text encoder is Meta's Llama 3) and then retargeted and planted by this fork's code.
+- Third-party assets of the original: [CREDITS.md](CREDITS.md).
 
-GPL-3.0-only (see LICENSE). Credits for third-party assets: CREDITS.md.
+**GPL-3.0-only** (see [LICENSE](LICENSE)), the same as the original. If you share a changed version, keep that
+license, pass on the source, and say that it is modified.

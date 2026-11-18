@@ -1,0 +1,27 @@
+65	8.0	high	Pinned by Param docs; anim blend delta 8, pedal speedAsymmetry 8, box volume 8*s^3 (world.rs:857), hf stiffness clamp(8,12), flinchMaxSteps 3..8
+66	1.7	high	shot headLookAtHeadPosMaxTimer 1.7 paired with MinTimer kv119=0.6 (documented NM pair); EYE height 1.7 m
+68	0.05	high	Pinned by Param docs; highFall footVelCompScale 0.05, POST_HALF 0.05x0.05, deadzones/thresholds
+69	0.0025	low	Squared edge tolerance factor: margin*margin*k (collision.rs:130, ragdoll.rs:1526); small, not 0.01/0.001/0.0001 (other slots); guess (0.05*margin)^2
+70	0.000001	medium	Generic small epsilon (RAGE SMALL_FLOAT 1e-6): squared-length/denominator guards in rigid.rs, sphere.rs, melee segment-segment, atan2f; distinct from 1e-9 (76) and 1e-10 (50)
+71	0.9999	low	expand_cone/clamp_to_cone: cone treated as degenerate when cos >= this; sits beside the 0.0001 tolerance (kv72) so 1-1e-4; 0.999 is likely slot 268
+72	0.0001	high	heading_between: if dy == 0 { dy = 0.0001 } (classic GTA GetRadianAngleBetweenPoints); handling.dat drag * 0.0001; small length guards
+73	2000.0	low	leanMaxTimeL..H = 1000..this ms; engine FIRE_STEPS entry between 1000 and kv758 (<4000); triangle extent cap in metres. 2500 or 3000 equally possible
+74	0.7	high	Anchor confirmed: bodyBalance damping 0.7, grab maxReach 0.7, bendElbowsGait 0.7, Brawler arms 0.7
+75	0.00000001	low	Minimum determinant ('area') in segment_triangle, single use; must be tiny positive so small triangles still hit; exact value unknown
+77	0.0625	high	mathrt pow: sixteenth = round(v*kv139)*kv77 so kv77 = 1/16 (kv139 = 16); also 0.25^2 squared-distance thresholds
+78	0.1	high	Anchor confirmed: stepHeight 0.1, turnOffProb 0.1, running average *0.1, many 0.1 defaults
+79	50.0	high	Anchor confirmed: bodyRelax relaxation 50, shockSpinMin 50 (max kv544=90), melee percent 50
+80	1.3	high	bodyRollUp/rollUp useArmToSlowDown 1.3 next to armReachAmount kv179=1.4 (documented NM pair); body shape scales 1.3 (Waddler arms, Guard/Brute legs, Bruiser width)
+82	1000.0	high	ms per second (dt*1000, /1000), vehicle body/engine/petrol health 1000, instant blend -1000, ray start z=1000
+83	1100.0	low	street_spawn probes ground from z=1000 downward by this length; single use, project code; must exceed ~1000 and differ from 1000/2000; any such value works
+84	4.0	high	Pinned by Param docs; quadratic discriminant b*b-4ac (collision.rs:916), sphere volume 4/3*pi*r^3 (world.rs:855), blend delta 4
+86	0x0FFFFFFF	high	Resource pointer offset mask: p >> 28 == 5 then p & 0x0FFFFFFF (curved.rs:31, sphere.rs:47, anim.rs:44, model.rs:51)
+96	256	high	Bit flag following 128 in TICKBOXES (drivesrichcar=128, drivesbigcar=this, then kv182=512, kv183=1024 confirmed by 10-bit sign-extend in model.rs:182); strncpy 256, header pad 256
+98	0x50000000	high	Resource pointer tag OR-ed onto offsets written big-endian (curved.rs:65-66); readers require p >> 28 == 5
+100	0.000030518509	high	1/32767: 15-bit rand() (seed>>16 & 0x7FFF) to unit float (classic GTA 3.0518509e-5); also bound quantum = half-extent/32767 so i16 quantisation cannot overflow (curved.rs:81)
+101	0.00001	medium	Squared-length threshold for safe normalise with fallback axis (gjk.rs:27 unit(), curved.rs:151); RAGE NormalizeSafe default magSq threshold 1e-5
+103	60.0	high	Native step 1/60 s (docs: 'native rate is 1/60 s'); dt*60 scaling throughout, rapier dt = 1/60
+112	0.07	high	Pinned by Param docs (stunInterval 0.07); spine lean 0.07, foot lift 0.07*size
+115	9.81	high	Gravity: w.gravity = (0,0,-kv115), weight = mass*kv115; known slot 67 = 58.86 = 6*9.81
+116	0.4	high	Pinned by Param docs; pedal radiusVariance 0.4, rollDownStairs armReachLength 0.4
+117	11.0	high	Pinned by Param docs; default bodyStiffness 11 across flinch, windmill, grab, highFall, rollDownStairs, shot; headLook stiffness 11

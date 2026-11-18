@@ -1,0 +1,145 @@
+; Stand-in task parameters for running with NO game. NOT part of the original and NOT the game's values.
+; The original reads these from the game's common.rpf data/taskparams.txt. Only the sets the engine has no fallback
+; of its own for are here (it would otherwise run them on zeros). Each value is the engine's own default for the
+; message it ends up in, or a plain guess where marked. TP=<file> on the command line or environment replaces this.
+NMExplosion * {
+	windmillArmStiffness 14.14
+	windmillBodyStiffness 11
+	windmillPeriode 1
+	windmillAmplitude 0.6
+	windmillPhase 0
+	pedalLegStiffness 10
+	pedalRadius 0.25
+	pedalSpeed 10
+	pedalOffset 0.15
+	pedalAsymmetry 8
+	writheArmStiffness 13
+	writheLegStiffness 13
+	writheBackStiffness 13
+	writheLegPeriod 1
+	writheArmPeriod 1
+	writheBackPeriod 1
+	writheDamping 0.5
+	writheLegAmplitude 1
+	writheArmAmplitude 1
+	writheBackAmplitude 1
+	writheKneeAmplitude 1
+	writheElbowAmplitude 1
+	rollupStiffness 10
+	rollupLegPush 0
+	rollupArmReachAmount 1.4
+	rollupArmToSlowDown 1.3
+	rollupAsymmetricalLegs 0
+	minPedalTimeInRollUp 500 ; guess, ms
+	maxPedalTimeInRollUp 1500 ; guess, ms
+}
+NMJumpRollFromRoadVehicle * {
+	velocityMultiplier 1 ; guess
+	velocityMaxMag 10 ; guess, m/s
+	initialUpwardsLift 1 ; guess, m/s
+	catchFallBodyStiffness 9 ; catchFall's default torso stiffness (arms 15, legs 6)
+	timeTillRollUp 300 ; guess, ms
+	rollUpStiffness 10
+	rollUpDamping 1
+	rollUpForceMag 0
+	rollUpAsymmetry 0
+	rollUpArmsToSlow 1.3
+	rollUpLegPush 0
+	rollUpArmReachLength 0.6
+	rollUpArmReachAmount 1.4
+	rollUpDecayTime 0
+	rollUpDecayTarget 0
+	rollUpAsymmetricalLegs 0
+	zAxisSpinReduction 0
+	rollUpUseZeroPose false
+	rollUpSpinInAir false
+}
+NMOnFire * {
+	onFireStumbleLeanAmount 0.2 ; guess
+	timePeriodBetweenDirectionRethink 1000 ; guess, ms
+	rangeOfDirectionVariance 1 ; guess, rad
+	writheStandingArmStiffness 13
+	writheStandingArmDamping 0.5
+	writheStandingArmPeriod 1
+	writheStandingArmAmplitude 1
+	writheStandingElbowAmplitude 1
+	writheStandingBackStiffness 13
+	writheStandingBackDamping 0.5
+	writheStandingBackPeriod 1
+	writheStandingBackAmplitude 1
+	writheLyingArmStiffness 13
+	writheLyingArmDamping 0.5
+	writheLyingArmPeriod 1
+	writheLyingArmAmplitude 1
+	writheLyingElbowAmplitude 1
+	writheLyingBackStiffness 13
+	writheLyingBackDamping 0.5
+	writheLyingBackPeriod 1
+	writheLyingBackAmplitude 1
+	writheLyingLegStiffness 13
+	writheLyingLegDamping 0.5
+	writheLyingLegPeriod 1
+	writheLyingLegAmplitude 1
+	writheLyingKneeAmplitude 1
+}
+NMBalance * {
+	balanceGrabPedalSpeedMax 10 ; pedalLegs' own defaults
+	balanceGrabPedalScaleWithLocalVelocity false
+	balanceGrabPedalScaleWithLocalVelocityMultiplier 1
+	balanceGrabPedalStiffness 10
+	balanceGrabPedalRadius 0.25
+	balanceGrabPedalOffset 0.15
+	balanceGrabPedalAsymmetry 8
+	angSpeedMultiplier4Dragging 0
+}
+
+; How a shot plays out by weapon. OUR OWN guesses, set around the engine's fallbacks (stiffness 10.5, lean 0.3,
+; 6 steps, looseness 1): the harder the weapon hits, the looser he goes, the further he leans and the fewer steps
+; he manages. The plain set (*) is left to the engine's fallbacks.
+NMShot_Standing POWERFUL_WEAPON {
+	shotBodyStiffness 9.5
+	shotLeanAmount 0.4
+	shotMaxSteps 5
+}
+NMShot_Standing SNIPER_RIFLE {
+	shotBodyStiffness 8.5
+	shotLeanAmount 0.55
+	shotMaxSteps 3
+	shotLooseness 1
+}
+NMShot_Standing SHOTGUN {
+	shotBodyStiffness 8.5
+	shotLeanAmount 0.6
+	shotMaxSteps 3
+	shotLooseness 1
+}
+NMShot_Standing WEAK {
+	shotBodyStiffness 9
+	shotLeanAmount 0.4
+	shotMaxSteps 4
+}
+NMShot_Standing WEAK_POWERFUL_WEAPON {
+	shotBodyStiffness 8.5
+	shotLeanAmount 0.5
+	shotMaxSteps 3
+}
+NMShot_Standing WEAK_SNIPER_RIFLE {
+	shotBodyStiffness 8
+	shotLeanAmount 0.65
+	shotMaxSteps 2
+}
+NMShot_Standing WEAK_SHOTGUN {
+	shotBodyStiffness 8
+	shotLeanAmount 0.7
+	shotMaxSteps 2
+}
+NMShot_Standing MELEE {
+	shotBodyStiffness 10.5
+	shotLeanAmount 0.25
+	shotMaxSteps 6
+}
+NMShot_Standing MELEE_BASEBALL {
+	shotBodyStiffness 9.5
+	shotLeanAmount 0.45
+	shotMaxSteps 4
+}

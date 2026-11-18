@@ -4273,6 +4273,13 @@ impl Rig {
         Some(Rig { build, part_of, parents: parents.to_vec() })
     }
 
+    /// MODIFIED (not in the original): a rig for a build that is its own skeleton (one bone per part, `bone` its index
+    /// and `offset` the part from its bone), for the stand-in clips with no game.
+    pub fn own(build: Build, parents: Vec<Option<usize>>) -> Rig {
+        let part_of = (0..build.parts.len()).map(Some).collect();
+        Rig { build, part_of, parents }
+    }
+
     pub fn place(&self, pose: &[(Vec3, Quat)], body: Transform) -> Vec<Transform> {
         let bones = pose_frames(&self.parents, pose, body);
         self.build.parts.iter().map(|d| {

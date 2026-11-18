@@ -1,0 +1,31 @@
+28	0.9	high	Param doc pins it (forwardMaxArmOffset); also |dot(up)| thresholds, 0.9*pi joint half-limit, ascending table 0,0.3,0.6,0.9,1.2, Stocky factor
+29	0.75	low	player's damage multiplier for explosion/fire/collision damage (ped.rs scale, bump cut); only known to be a fraction below 1, exact value not derivable
+30	15.0	high	smootherstep t*(t*6-15)+10 in nmfl.rs:83; catchFall armsStiffness 15; Param docs
+31	10.0	high	anchor confirmed: smootherstep constant 10, headLook stiffness, task max 10 s
+32	7.0	high	Param doc (neckStiffness); descending joint table 9,8,7,6 in extras_held.rs:686; s15c = (1..2)*7
+33	2.5	high	braceForImpact grabHoldTimer 2.5 beside grabDistance 2.0 / grabReachAngle 1.5; 2.5 m stair probe; wall half-height 2.5; 3.0 and 4.0 are other slots
+34	9.81	high	GRAVITY everywhere; collision.rs SPRING (known slot 67) = 58.86 = 6 * 9.81 and lift = g*(6*(dz+1)+1); room code compensates with 9.81 (note collider.rs has an unstripped const -9.8)
+35	6.0	high	wheelstep SIXTH = 1/kv(35); smootherstep 6t^5; catchFall legsStiffness 6; Param docs
+38	25.0	high	GTA LimitRadianAngle clamps to +-25 before wrapping (actiontable.rs wrap, fall.rs wrap_angle); squared 5 m / 5 m/s tests; pool y 5..25; 20.0 is slot 25
+40	500	medium	Relax min/max (250, 500); cooldown / first-look 500 ms; chance 500/32767; fits a 4-byte-stride key between neighbours in actiontable; all values 3..255 are taken
+41	1000	high	GJK iteration cap (Bullet gGjkMaxIter = 1000, same loop shape); Brace min 1000 ms = Task::min_time 1.0 s; BALANCE_MS [1000, 10000]
+42	3000	low	roll time range (1000, x) for dying roll-up vs (1000, 2000) for hard hits; down-shift lockout and fall-down push wait in ms; also a control offset (base + 12*k), unverified
+43	2000	medium	min ms of bump tasks (falldown.rs uses [2.0, 10.0] s); > kv(41)=1000 in int_in_range(41,43); look/stand timers, car-hit down time, melee wait lower bound
+44	30000	medium	max ms of bump tasks incl. Brace, whose max_time is 30 s (nm.rs:2671) while its min is kv(41)=1000=1 s; Made.max is u16 so <= 65535; 10000 is slot 61
+45	16.0	low	squared distance to an on-foot player (the in-car test beside it is 25 = 5 m); 4 m guessed, 4.0/9.0/2.25/25.0 are other slots
+46	110.0	high	anchor confirmed: Large profile 110 kg; player weak below 110 health; grab strength range 80..110
+47	140.0	high	CHANGELOG: "The Brute weighs 140 kg" (SHAPES fifth column is kg); non-player weak-health threshold
+48	500.0	medium	shotMaxBlindFireTimeL (ms) beside H = kv(82) = 1000; hard-impact impulse threshold; fallOverWall force 500 then /13
+49	16383	medium	coin flip: rand.next() is (seed>>16) & 0x7FFF, so RAND_MAX/2 = 16383; 16384 is slot 676 (flag bit 0x4000)
+50	0.000001	high	gjk REL2 (Bullet REL_ERROR2 = 1e-6) used as f0 <= d2*REL2; epsilons added to denominators and length-squared tests
+51	0.01	high	(100 - relaxation) * 0.01 in nm.rs:540; sleep v^2, 1 cm margins, 0.01 scaling of ints in ide.rs; ladder 1e-4 (72), 1e-3 (134), 1e-2
+52	8192	high	flag bit 0x2000: 14th entry in both sequential bit tables (smoker / tallship) after 2048, 4096; pad button bit; BVH result cap
+53	65535	high	0xFFFF: clamp of a value stored as u16 (bvh quant), handle & 0xFFFF with generation << 16, rng draw & 0xFFFF
+57	0.64	low	fraction of pelvis_height^2 capping leg splay before sqrt (must be < 1) and a squared "moving" speed; 0.8^2 guessed, not derivable
+58	1219	high	R_HAND bone id 0x4C3: ped.rs bone_share keeps 0x4C1,0x4C2 (R arm) and 0x4C3 (hand share 0.5) as literals
+59	1232	high	L_HAND bone id 0x4D0: ped.rs bone_share keeps 0x4C8,0x4C9 (L arm) and 0x4D0 (hand share 0.5) as literals
+60	0.2	high	anchor confirmed: leanInDirection 0.2, Param docs, clamp(-0.2, 0.2)
+61	10000	medium	Shot task max when slow (room SHOT_EXIT max 10 s, Task max_time 10 s); BALANCE_MS [1000, 10000] = balance times [1.0, 10.0]; walk step budget
+62	20000	low	COMPLEX_MS [2000, x] wrapper max and point-route stand-still ms; only known to differ from 10000 and 30000; 5000 is the other candidate
+63	80.0	high	anchor confirmed: collider.rs keeps MAX_SPEED = 80.0; Brawler 80 kg; grab strength 80..110
+64	5.0	high	wheelstep.rs:409 names it: (five, tenth, one, half) = (kv(64), kv(78), 1.0, 0.5); Param doc trunkStiffness

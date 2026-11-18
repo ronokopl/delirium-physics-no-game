@@ -1,0 +1,162 @@
+5	3.0	source's own Param docs
+9	0.15	source's own Param docs
+11	40.0	source's own Param docs
+12	1.5	source's own Param docs; docs' Brawler head
+17	0.25	source's own Param docs
+19	0.95	source's own Param docs
+20	0.8	source's own Param docs
+21	12.0	source's own Param docs
+24	0.3	source's own Param docs
+25	20.0	source's own Param docs
+27	30.0	source's own Param docs
+28	0.9	source's own Param docs
+30	15.0	source's own Param docs
+31	10.0	source's own Param docs
+32	7.0	source's own Param docs
+35	6.0	source's own Param docs
+60	0.2	source's own Param docs
+64	5.0	source's own Param docs
+65	8.0	source's own Param docs
+68	0.05	source's own Param docs
+74	0.7	source's own Param docs; docs' Brawler arms
+78	0.1	source's own Param docs
+84	4.0	source's own Param docs
+112	0.07	source's own Param docs
+116	0.4	source's own Param docs
+117	11.0	source's own Param docs
+119	0.6	source's own Param docs
+123	3.14	source Param docs say 3.14; stored apart from pi
+126	14.0	source's own Param docs
+136	1.2	source's own Param docs
+138	1.1	source's own Param docs
+140	0.35	source's own Param docs
+141	2.25	source's own Param docs
+142	0.18	source's own Param docs
+10	0.45	docs' Brawler legs
+63	80.0	docs' Brawler kg
+179	1.4	docs' Brawler width
+13	1.75	docs' body presets: medium 1.75 m
+192	1.9	docs' body presets: large and lanky 1.90 m
+491	1.6	docs' body presets: small 1.60 m
+586	1.72	docs' body presets: fat 1.72 m
+588	1.63	docs' body presets: stocky 1.63 m
+584	55.0	docs' body presets: small 55 kg
+585	77.0	docs' body presets: medium 77 kg
+46	110.0	docs' body presets: large 110 kg
+569	64.0	docs' body presets: lanky 64 kg
+587	125.0	docs' body presets: fat 125 kg
+589	88.0	docs' body presets: stocky 88 kg
+18	0.75	agreed by several sheets
+26	100.0	agreed by several sheets
+33	2.5	agreed by several sheets
+47	140.0	agreed by several sheets
+51	0.01	agreed by several sheets
+52	8192	flag and mask sequences in name tables
+53	65535	flag and mask sequences in name tables
+72	0.0001	agreed by several sheets
+77	0.0625	agreed by several sheets
+80	1.3	agreed by several sheets
+82	1000.0	agreed by several sheets
+96	256	flag and mask sequences in name tables
+103	60.0	agreed by several sheets
+134	0.001	agreed by several sheets
+139	16.0	agreed by several sheets
+180	1536	flag and mask sequences in name tables
+181	4096	flag and mask sequences in name tables
+182	512	flag and mask sequences in name tables
+183	1024	flag and mask sequences in name tables
+184	65536	flag and mask sequences in name tables
+211	417	bone ids kept as literals elsewhere in the source
+547	3.6	agreed by several sheets
+564	441	consecutive whole numbers in one table of the program
+566	32767	flag and mask sequences in name tables
+601	4095	flag and mask sequences in name tables
+603	260	consecutive whole numbers in one table of the program
+604	264	consecutive whole numbers in one table of the program
+611	418	bone ids kept as literals elsewhere in the source
+612	419	bone ids kept as literals elsewhere in the source
+613	420	bone ids kept as literals elsewhere in the source
+614	423	bone ids kept as literals elsewhere in the source
+615	424	bone ids kept as literals elsewhere in the source
+616	425	bone ids kept as literals elsewhere in the source
+622	288	consecutive whole numbers in one table of the program
+624	304	consecutive whole numbers in one table of the program
+627	416	consecutive whole numbers in one table of the program
+648	131072	flag and mask sequences in name tables
+676	16384	flag and mask sequences in name tables
+694	3072	flag and mask sequences in name tables
+712	32768	flag and mask sequences in name tables
+722	2048	flag and mask sequences in name tables
+780	388	consecutive whole numbers in one table of the program
+781	389	consecutive whole numbers in one table of the program
+782	390	consecutive whole numbers in one table of the program
+802	430	consecutive whole numbers in one table of the program
+803	398	consecutive whole numbers in one table of the program
+806	320	consecutive whole numbers in one table of the program
+807	352	consecutive whole numbers in one table of the program
+808	384	flag and mask sequences in name tables
+816	16777216	flag and mask sequences in name tables
+817	67108864	flag and mask sequences in name tables
+818	262144	flag and mask sequences in name tables
+820	524288	flag and mask sequences in name tables
+822	4194304	flag and mask sequences in name tables
+823	8388608	flag and mask sequences in name tables
+825	1048576	flag and mask sequences in name tables
+826	2097152	flag and mask sequences in name tables
+925	33554432	flag and mask sequences in name tables
+927	431	consecutive whole numbers in one table of the program
+932	1023	flag and mask sequences in name tables
+965	269	consecutive whole numbers in one table of the program
+968	1.52587890625e-05	agreed by several sheets
+970	411	consecutive whole numbers in one table of the program
+971	412	consecutive whole numbers in one table of the program
+981	278	consecutive whole numbers in one table of the program
+982	280	consecutive whole numbers in one table of the program
+983	291	consecutive whole numbers in one table of the program
+984	401	consecutive whole numbers in one table of the program
+985	273	consecutive whole numbers in one table of the program
+986	281	consecutive whole numbers in one table of the program
+987	283	consecutive whole numbers in one table of the program
+988	292	consecutive whole numbers in one table of the program
+989	285	consecutive whole numbers in one table of the program
+1006	415	consecutive whole numbers in one table of the program
+1007	364	consecutive whole numbers in one table of the program
+1020	399	consecutive whole numbers in one table of the program
+1021	257	consecutive whole numbers in one table of the program
+1022	258	consecutive whole numbers in one table of the program
+1023	259	consecutive whole numbers in one table of the program
+1024	261	consecutive whole numbers in one table of the program
+1025	262	consecutive whole numbers in one table of the program
+1026	263	consecutive whole numbers in one table of the program
+1027	265	consecutive whole numbers in one table of the program
+1028	266	consecutive whole numbers in one table of the program
+1029	267	consecutive whole numbers in one table of the program
+1030	268	consecutive whole numbers in one table of the program
+1031	270	consecutive whole numbers in one table of the program
+1032	271	consecutive whole numbers in one table of the program
+1033	272	consecutive whole numbers in one table of the program
+1034	274	consecutive whole numbers in one table of the program
+1035	275	consecutive whole numbers in one table of the program
+1036	276	consecutive whole numbers in one table of the program
+1037	277	consecutive whole numbers in one table of the program
+1038	279	consecutive whole numbers in one table of the program
+1039	282	consecutive whole numbers in one table of the program
+1040	284	consecutive whole numbers in one table of the program
+1041	286	consecutive whole numbers in one table of the program
+1042	287	consecutive whole numbers in one table of the program
+1043	289	consecutive whole numbers in one table of the program
+1044	290	consecutive whole numbers in one table of the program
+1045	293	consecutive whole numbers in one table of the program
+1046	294	consecutive whole numbers in one table of the program
+1047	295	consecutive whole numbers in one table of the program
+1048	296	consecutive whole numbers in one table of the program
+1067	448	flag and mask sequences in name tables
+1078	12288	flag and mask sequences in name tables
+607	1224	bone ids as the source's own PART_BONES table has them
+608	1225	bone ids as the source's own PART_BONES table has them
+609	1217	bone ids as the source's own PART_BONES table has them
+610	1218	bone ids as the source's own PART_BONES table has them
+58	1232	bone ids as the source's own PART_BONES table has them
+59	1219	bone ids as the source's own PART_BONES table has them
+778	1216	bone ids as the source's own PART_BONES table has them
+779	1223	bone ids as the source's own PART_BONES table has them

@@ -1,0 +1,190 @@
+
+// MODIFIED (not in the original): stand-in clips for running with NO game (docs/no-game.md). The original reads the
+// get-up, idle, walk, run, sprint and gun clips from the game's archives. These are made here from the stand-in body
+// alone: a few hand-written key poses per clip, given as how far each joint is bent. They are our own and plain; they
+// are not the game's animation.
+const OWN_FPS: f32 = 30.0;
+/// One key pose, in degrees. pitch: the whole body tipped forward (90: face down, -90: on his back). hip: thigh forward;
+/// knee, elbow: bent; ankle: toes up; spine, neck: bent forward; arm: upper arm forward; out: upper arm away from the side.
+/// Sides are [left, right].
+#[derive(Clone, Copy, Default)]
+struct Key {
+    t: f32,
+    pitch: f32,
+    hip: [f32; 2],
+    knee: [f32; 2],
+    ankle: [f32; 2],
+    spine: f32,
+    neck: f32,
+    arm: [f32; 2],
+    out: [f32; 2],
+    elbow: [f32; 2],
+}
+
+struct OwnRig {
+    parents: Vec<Option<usize>>,
+    stand: Vec<Transform>,
+    origin: Vec<Vec3>,
+    shape: Vec<(f32, f32, Option<Vec3>)>,
+}
+
+impl OwnRig {
+    /// Every part's turn from standing, as a quaternion in the standing body's axes (x right, y forward, z up).
+    fn turns(&self, k: &Key) -> Vec<Quat> {
+        let rx = |deg: f32| Quat::from_rotation_x(deg.to_radians());
+        let mut e = vec![Quat::IDENTITY; self.parents.len()];
+        e[0] = rx(-k.pitch);
+        for (side, leg, arm) in [(0, 1, 13), (1, 4, 17)] {
+            e[leg] = rx(k.hip[side]);
+            e[leg + 1] = rx(-k.knee[side]);
+            e[leg + 2] = rx(k.ankle[side]);
+            let away = if side == 0 { 1.0 } else { -1.0 };
+            e[arm + 1] = rx(k.arm[side]) * Quat::from_rotation_y((away * k.out[side]).to_radians());
+            e[arm + 2] = rx(k.elbow[side]);
+        }
+        for s in 7..11 {
+            e[s] = rx(-k.spine / 4.0);
+        }
+        e[11] = rx(-k.neck / 2.0);
+        e[12] = rx(-k.neck / 2.0);
+        e
+    }
+
+    /// Where each part is with these turns (pelvis at the origin), and the lowest point of the body.
+    fn posed(&self, e: &[Quat]) -> (Vec<Transform>, f32) {
+        let n = self.parents.len();
+        let (mut d, mut at) = (vec![Quat::IDENTITY; n], vec![Vec3::ZERO; n]);
+        let mut out = Vec::with_capacity(n);
+        let mut low = f32::MAX;
+        for k in 0..n {
+            match self.parents[k] {
+                None => (d[k], at[k]) = (e[k], Vec3::ZERO),
+                Some(p) => (d[k], at[k]) = (d[p] * e[k], at[p] + d[p] * (self.origin[k] - self.origin[p])),
+            }
+            let f = Transform::from_translation(at[k] + d[k] * (self.stand[k].translation - self.origin[k])).with_rotation(d[k] * self.stand[k].rotation);
+            let (r, h, boxed) = self.shape[k];
+            low = low.min(match boxed {
+                Some(b) => f.translation.z - (f.rotation * Vec3::X).z.abs() * b.x - (f.rotation * Vec3::Y).z.abs() * b.y - (f.rotation * Vec3::Z).z.abs() * b.z,
+                None => f.translation.z - (f.rotation * Vec3::Y).z.abs() * h - r,
+            });
+            out.push(f);
+        }
+        (out, low)
+    }
+
+    /// A clip from key poses. `feet`: keep the feet where they are (get-ups) instead of the pelvis over the origin.
+    /// `travel`: metres moved forward over the clip (walks). The floor is 1 m under the body's origin, as in the game's clips.
+    fn clip(&self, name: &str, keys: &[Key], feet: bool, travel: f32) -> (anim::Animation, Vec<Option<usize>>) {
+        let n = self.parents.len();
+        let duration = keys.last().map_or(1.0, |k| k.t).max(0.05);
+        let frames = ((duration * OWN_FPS).round() as usize).max(1) + 1;
+        let mut rot = vec![vec![vec![0.0f32; frames]; 4]; n];
+        let mut pos = vec![vec![0.0f32; frames]; 3];
+        let mut mover = vec![vec![0.0f32; frames]; 3];
+        for f in 0..frames {
+            let t = duration * f as f32 / (frames - 1) as f32;
+            let i = keys.iter().rposition(|k| k.t <= t).unwrap_or(0).min(keys.len().saturating_sub(2));
+            let (a, b) = (&keys[i], &keys[(i + 1).min(keys.len() - 1)]);
+            let u = if b.t > a.t { ((t - a.t) / (b.t - a.t)).clamp(0.0, 1.0) } else { 0.0 };
+            let u = if feet { u * u * (3.0 - 2.0 * u) } else { u };
+            let e: Vec<Quat> = self.turns(a).into_iter().zip(self.turns(b)).map(|(x, y)| x.slerp(y, u)).collect();
+            let (parts, low) = self.posed(&e);
+            let mid = (parts[3].translation + parts[6].translation) * 0.5;
+            let root = if feet { Vec3::new(-mid.x, -mid.y, -1.0 - low) } else { Vec3::new(0.0, 0.0, -1.0 - low) };
+            for k in 0..n {
+                let q = match self.parents[k] {
+                    None => e[0] * self.stand[0].rotation,
+                    Some(p) => self.stand[p].rotation.inverse() * e[k] * self.stand[k].rotation,
+                }.normalize();
+                for (c, v) in [q.x, q.y, q.z, q.w].into_iter().enumerate() {
+                    rot[k][c][f] = v;
+                }
+            }
+            for (c, v) in root.to_array().into_iter().enumerate() {
+                pos[c][f] = v;
+            }
+            mover[1][f] = travel * f as f32 / (frames - 1) as f32;
+        }
+        let mut tracks: Vec<anim::Track> = rot.into_iter().enumerate().map(|(k, values)| anim::Track { kind: anim::BONE_ROTATION, bone: k as u16, values }).collect();
+        tracks.push(anim::Track { kind: anim::BONE_TRANSLATION, bone: 0, values: pos });
+        if travel != 0.0 {
+            tracks.push(anim::Track { kind: anim::MOVER_TRANSLATION, bone: 0, values: mover });
+        }
+        let map = tracks.iter().map(|t| Some(t.bone as usize).filter(|&b| b != 0)).collect();
+        (anim::Animation { name: name.into(), hash: 0, frames, duration, tracks, mover_rotation: None, events: vec![] }, map)
+    }
+
+    /// One stride of a walk, run or sprint: `swing` hips, `knee` lift, `arms` swing, `lean` forward, elbows held at `elbow`.
+    #[allow(clippy::too_many_arguments)]
+    fn stride(&self, name: &str, secs: f32, travel: f32, swing: f32, knee: f32, arms: f32, lean: f32, elbow: f32) -> (anim::Animation, Vec<Option<usize>>) {
+        let keys: Vec<Key> = (0..=16).map(|i| {
+            let ph = i as f32 / 16.0 * std::f32::consts::TAU;
+            let (s, c) = ph.sin_cos();
+            Key { t: secs * i as f32 / 16.0, pitch: lean, hip: [swing * s + lean, -swing * s + lean], knee: [knee * c.max(0.0) + 6.0, knee * (-c).max(0.0) + 6.0],
+                  ankle: [0.0; 2], spine: lean * 0.3, neck: -lean, arm: [-arms * s, arms * s], out: [0.0; 2], elbow: [elbow; 2] }
+        }).collect();
+        self.clip(name, &keys, false, travel)
+    }
+}
+
+impl Clips {
+    /// The stand-in clips for a body that did not come from the game: `stand` is how its parts are when it stands.
+    pub fn own(build: &Build, stand: &[Transform]) -> Clips {
+        let n = build.parts.len();
+        let half_turn = Quat::from_rotation_z(std::f32::consts::PI);
+        let p0 = stand[0].translation;
+        // the standing body in the clips' space: facing +y, the floor at z = -1, the pelvis over the origin
+        let g: Vec<Transform> = stand.iter().map(|f| Transform::from_translation(half_turn * (f.translation - Vec3::new(p0.x, p0.y, 1.0))).with_rotation(half_turn * f.rotation)).collect();
+        let parents: Vec<Option<usize>> = build.parts.iter().map(|p| p.parent).collect();
+        let origin: Vec<Vec3> = (0..n).map(|k| if parents[k].is_some() { g[k].translation + g[k].rotation * build.parts[k].anchor } else { g[k].translation }).collect();
+        let rig = OwnRig { parents: parents.clone(), stand: g.clone(), origin: origin.clone(), shape: build.parts.iter().map(|p| (p.radius, p.half, p.boxed)).collect() };
+        let z = Key::default();
+        let squat = Key { pitch: 40.0, hip: [120.0; 2], knee: [125.0; 2], ankle: [20.0; 2], arm: [25.0; 2], elbow: [20.0; 2], ..z };
+        let front = [
+            Key { t: 0.0, pitch: 90.0, ankle: [-55.0; 2], neck: -20.0, elbow: [90.0; 2], out: [10.0; 2], ..z },
+            Key { t: 0.6, pitch: 68.0, hip: [15.0; 2], knee: [35.0; 2], ankle: [-55.0; 2], neck: -25.0, arm: [70.0; 2], elbow: [15.0; 2], ..z },
+            Key { t: 1.2, pitch: 45.0, hip: [100.0; 2], knee: [130.0; 2], ankle: [-40.0; 2], arm: [55.0; 2], elbow: [10.0; 2], ..z },
+            Key { t: 1.8, ..squat },
+            Key { t: 2.5, ..z },
+        ];
+        let back = [
+            Key { t: 0.0, pitch: -90.0, ankle: [-30.0; 2], elbow: [10.0; 2], out: [10.0; 2], ..z },
+            Key { t: 0.7, pitch: -20.0, hip: [70.0; 2], knee: [10.0; 2], spine: 25.0, arm: [-35.0; 2], elbow: [10.0; 2], ..z },
+            Key { t: 1.4, pitch: 15.0, hip: [125.0; 2], knee: [115.0; 2], spine: 20.0, arm: [20.0; 2], elbow: [20.0; 2], ..z },
+            Key { t: 2.0, ..squat },
+            Key { t: 2.7, ..z },
+        ];
+        let mut clips = vec![rig.clip("get_up_fast", &front, true, 0.0), rig.clip("get_up_fast", &back, true, 0.0),
+                             rig.clip("idle", &[z, Key { t: 1.0, ..z }], false, 0.0),
+                             rig.stride("walk", 1.0, 1.4, 24.0, 45.0, 18.0, 3.0, 15.0),
+                             rig.stride("run", 0.66, 2.4, 38.0, 80.0, 38.0, 9.0, 80.0),
+                             rig.stride("sprint", 0.5, 3.0, 48.0, 100.0, 52.0, 14.0, 90.0)];
+        // guns: the right arm held out to fire, bent to reload
+        let aim = Key { arm: [0.0, 85.0], elbow: [0.0, 8.0], ..z };
+        let load = Key { arm: [35.0, 40.0], elbow: [80.0, 95.0], ..z };
+        clips.push(rig.clip("fire", &[aim, Key { t: 0.08, arm: [0.0, 92.0], ..aim }, Key { t: 0.25, ..aim }], false, 0.0));
+        clips.push(rig.clip("reload", &[aim, Key { t: 0.3, ..load }, Key { t: 0.9, ..load }, Key { t: 1.2, ..aim }], false, 0.0));
+        let guns = vec![Some((clips.len() - 2, clips.len() - 1)); GUN_CLIPS.len()];
+        // a plain right punch, for the Hero with no fight data
+        let wind = Key { arm: [20.0, 10.0], elbow: [70.0, 120.0], spine: 5.0, ..z };
+        clips.push(rig.clip("punch", &[Key { t: 0.0, ..z }, Key { t: 0.12, ..wind }, Key { t: 0.24, arm: [10.0, 88.0], elbow: [60.0, 5.0], spine: 10.0, ..z }, Key { t: 0.5, ..z }], false, 0.0));
+        let bind: Vec<(Vec3, Quat)> = (0..n).map(|k| match parents[k] {
+            None => (g[0].translation, g[0].rotation),
+            Some(p) => (g[p].rotation.inverse() * (origin[k] - origin[p]), g[p].rotation.inverse() * g[k].rotation),
+        }).collect();
+        let parts: Vec<(usize, Transform)> = (0..n).map(|k| (k, Transform::from_translation(g[k].rotation.inverse() * (g[k].translation - origin[k])))).collect();
+        let mut body = build.clone();
+        for (k, p) in body.parts.iter_mut().enumerate() {
+            (p.bone, p.offset) = (k, parts[k].1);
+        }
+        let chest = build.parts.iter().position(|d| d.parent == Some(0) && !d.lower).unwrap_or(0);
+        Clips { scale: Default::default(), bind, hero: Some(std::rc::Rc::new(delirium::ragdoll::Rig::own(body, parents.clone()))), parents,
+                fight_from: clips.len(), clips, parts, chest, guns, names: build.parts.iter().map(|p| p.name.clone()).collect(),
+                ids: (0..n as u16).collect(), fight: None, swim: None }
+    }
+
+    /// The stand-in punch clip, when these are the stand-in clips (no fight data).
+    pub fn own_punch(&self) -> Option<usize> {
+        (self.fight.is_none() && self.clips.last().is_some_and(|c| c.0.name == "punch")).then(|| self.clips.len() - 1)
+    }
+}

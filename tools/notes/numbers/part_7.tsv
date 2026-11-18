@@ -1,0 +1,100 @@
+527	1.2e-7	low	twist/swing split: if w^2+z^2 > eps (NM/PhysX form uses 1.2e-7); sorted float pool rank 5, below slot 602 and below slot 50 (1e-6)
+528	1.4142135	high	quat_rows scales q by c then uses 1-(yy+zz): c = sqrt(2); pool rank between 4/3 and 3pi/4; same exe location as slot 810
+529	0x3FFFFFFF	low	seed mask ANDed with known 0xFFFFBEEF; real mask unknown (found only as a code immediate); any wide mask keeps the seed valid; not 0xFFFFFFFF/0x7FFFFFFF (other slots)
+531	8388607.0	high	NM random float = (bits & 0x7FFFFF) / 8388607.0; random()*kv recovers the low bit; pool rank just under FLT_MAX
+532	2147483647	high	0x7FFFFFFF: (bits & kv) * range >> 31 in ScriptRand::int_in_range; random_bits mask
+533	6.2	medium	rollUp rate = kv + 12.4*rand = 6.2*(1+2r), phase = 6.2*rand; pool rank 2 entries under 2pi (6.28 sits between); quake z frequency 6.2 Hz
+535	0.33333334	high	running average (roll*2 + x)/3; same exe location as slot 553 (capsule inertia 1/3)
+536	2.2	high	slack = (clamp(v,0.2,kv)-0.2)*0.5 runs 0..1 => 2.2; gun spread: 2*(1.1*ped) = 2.2*ped mirrors (2*p).max(0.2)
+537	2.5	low	rollUp angular-speed threshold (compared as f64) and quake y frequency in Hz; real value unknown, not 2.0/3.0
+538	1.15	low	right-leg kick frequency ratio in rollUp; pool rank between 16/15 (1.0667) and slot 237 (~1.25), ~3 entries above 1.0667
+539	0.23	low	elbow = k*kv + 1.5; pool rank 103 (between 1/12 and 1/3, ~0.22-0.24); same exe location as slot 656 (carscan 0.9 + rand*kv)
+540	2.65	low	rollUp arm aim: up * -kv + spine3 velocity; pool rank directly above slot 559 (~2.6), below 2.8
+541	0.015	low	rollUp arm aim: (angvel x up) * kv; pool rank 4 entries below deg-to-rad 0.01745
+542	3.75	low	reach ramp gain: ((d - offset) * kv) clamped 0..1; pool rank 4 entries below 4pi/3 (4.18879), above slot 243
+543	2112	medium	NM_SCRIPT_CONTROL task id: IV NM ids run 2104.. (SHOT 2107, HIGH_FALL 2108, BALANCE 2109, EXPLOSION 2110 literal in source, ON_FIRE 2111) then SCRIPT_CONTROL 2112
+544	90.0	high	shot shockSpinMax 90 next to shockSpinMin 50 (kv79), decay 4, scale 0.5 (NM defaults); petrol burn 60 + 90*burn per s
+547	3.6	high	vehicles.rs: handling.dat top speed (field 11, km/h) / 3.6 = m/s; shot non-fling period 3.6 (code immediate, absent from rdata)
+548	0.21	low	time since hit before head look when grabbing front; pool rank 100 (just above 0.2, below slot 539)
+550	0.7853982	medium	reaction phase shift +pi/4 vs -3pi/4 (slot 551): sin(x-3pi/4) = -sin(x+pi/4), mirrored when hit from behind; pool rank ~0.75-0.79
+551	2.3561945	medium	3pi/4, partner of slot 550 = pi/4 (exactly opposite phase); pool rank between sqrt2 and 2.8
+552	1.15	high	tyre GRIP_115 flag multiplies traction bias by 1.15 beside GRIP_130 * kv80 = 1.3; chicken-arm shoulder angle
+553	0.33333334	high	capsule transverse inertia: (l^3/4 + 1.6 r^3 + l^2 r + 2.25 r^2 l)/3 gives the exact l^3/12, 8r^3/15, l^2 r/3, 3 r^2 l/4 terms; same exe location as 535
+554	3.1	low	left fling arm angle clamp (then sin/cos of it): just under pi; pool rank 2 entries above 2.8, below slot 238 and pi
+555	0.31	low	fling elbow: (4 - x).min(kv) * 3.5; pool rank 110 (4 entries under 1/3, above 0.3)
+556	0.36	low	left clavicle: fling_width*kv - 0.2 (right side uses 0.45, -0.25); pool rank 2 above 1/3 and 3 below 0.4 (0.35 is slot 140)
+557	3.2	low	right fling arm angle clamp; pool rank 3 above slot 554 (pi sits between), below slot 1079
+558	17.0	low	shot wrist/neck stiffness restored after fling (spine/arms go to 12; start values 20); also linear cap per step in ragdoll push; not 16/18/20 (other slots)
+559	2.6	low	Bruiser hips-width factor (short legs set wide, body width 1.3) and wrist twist clamp len*kv; pool rank ~14 of 24 between 3pi/4 and 2.8
+560	0.33	low	dynamic-balancer knee strength scale on leg collapse (crouch uses literal 0.5); value exists only as a code immediate so it is none of the common 0.3/0.35/0.4
+561	33.333332	low	looseness from speed: (v - 0.1*prev) * dt * kv clamped to 1; rate constant, not 20/30/60 (other slots); real value unknown
+562	0.314159	low	sin(clamp(since_hit,0,kv252) * kv) relax ramp; pool rank 111 (3 entries under 1/3) ~ pi/10
+563	2115	low	NM_SIT task id: one of the free NM ids 2113..2116 (2114/2116 used as placeholders for FLINCH/FALL_DOWN in part 6); sorted exe id table puts it above EXPLOSION 2110
+564	441	medium	on-fire activity/task id: exe table of consecutive ints (8-byte entries), index 428 + 13 (same table gives DUCK 415, legs 0x1A2..0x1A9)
+565	0.017453292	high	degrees to radians: ipltext rot_degrees * kv, onfire variance (deg) * kv; same exe location as slot 617
+566	32767	high	0x7FFF: classic rand (seed>>16) & 0x7FFF; slot 53 is 0xFFFF and slot 100 is 1/32767
+567	127.5	high	pad stick half range: (raw_u8 - 127.5) * (1/127.5), back to int with * 127.5; pool rank between 100 and 4000
+568	0.007843138	high	1/127.5 (= 2/255), partner of slot 567; same exe location as slot 741
+569	64.0	high	anchor confirmed: Lanky 64 kg; follow dist^2 > 64 (8 m); wander stick range
+570	0.04	medium	world collision margin 0.04 (Bullet/RAGE convex margin) and sleep ang-vel^2 0.04 (0.2 rad/s) beside v^2 0.01; coping overhang 4 cm; conflicts with part value 133 = 0.04, one of the two must differ
+571	0.083333336	high	box inertia (y^2+z^2)/12; same exe location as slot 518 (leg_strength.clamp(1,12) * 1/12)
+572	1.3333334	high	capsule volume factor l + 4r/3
+573	1.0666667	high	capsule axial inertia: r^2 (l + 16r/15) / (2 (l + 4r/3))
+574	0.0005	low	3x3 solve tolerance = largest element * kv; pool rank 26 (around 1e-3) but not 0.001/0.0001 (other slots)
+575	1.0e-10	medium	pivot floor trace * eps; SAME exe location as slot 4, so it must equal slot 4 (part 2 has 1e-10); artic.rs has the same line with kv!(4)
+576	300	low	parallel-solve threshold on block count and an action-table key (u16); real value unknown; 300 is outside the runs of the exe int table
+577	0.01	low	allowed penetration (ALLOW) and push keep clamp in the ragdoll contact solver; RAGE-style 1 cm; could be 0.005
+578	0.0004	medium	contact cache distance^2 threshold = 0.02^2 (slot 118 = 0.02 is the accept gap), as Bullet getCacheEntry / refreshContactPoints
+579	1.0e30	low	no-best-yet sentinel for a minimum search; any huge value works; not FLT_MAX (slot 3), 1e18 or 1e20 (known slots)
+580	0.3333333	medium	mean inertia (ix+iy+iz) * 1/3; pool rank immediately below the exact 1/3 (slots 535/553), so a truncated literal
+581	0.021	low	conservative-advance stop distance, just above the 0.02 margin subtracted from each step; pool rank 4 above deg-to-rad
+582	1.3962634	low	angular move cap per step (rad); pool rank immediately below sqrt2 and 3 above 4/3, not 1.4 (slot 179) => 80 degrees
+584	55.0	high	anchor confirmed: Small 55 kg (docs)
+586	1.72	high	anchor confirmed: Fat 1.72 m (docs)
+587	125.0	high	anchor confirmed: Fat 125 kg (docs); also low health < 125 on the 100..200 ped scale
+589	88.0	high	anchor confirmed: Stocky 88 kg (docs)
+590	150.0	low	Waddler body kg (wide 1.8, short legs; Fat is 125, Brute 140) and vehicle body-health floor after a fire is put out; real value unknown
+591	0.53	high	profile scale = height / h / (kv*limbs + 0.47): fractions sum to 1 with known slot 592 = 0.47
+601	4095	high	test builds 1 + kv + 1 nodes and expects order [0, kv181] + 1..kv181 => kv = kv181 - 1 = 4095
+602	5.0e-7	low	singular test |det| <= max element * eps; pool rank directly above slot 527, below 1e-6
+603	260	high	PAD_DPAD_UP token: tokens are consecutive from PAD_UP = 256 (slot 96), exe table 8 bytes apart; also struct offset part+260
+604	264	high	PAD_DPAD_NONE token = 256 + 8; also struct offset part+264 (beside known 240/244)
+605	100000	medium	shot task max ms when not slow; nm.rs has the same test in seconds: max (10 s) if slow else kv26 = 100 s
+606	600.0	low	shotMaxTimeToStopLeanH in ms, above L = kv176 (unknown, ~300); real value unknown
+607	1224	medium	R_UPPERARM bone id 0x4C8: ped.rs keeps arm ids 0x4C1,0x4C2,(hand 0x4C3) and 0x4C8,0x4C9,(hand 0x4D0); left limbs have the lower ids (legs 0x1A2 L / 0x1A7 R), right hand is 0x4D0
+608	1225	medium	R_FOREARM bone id 0x4C9 (see 607)
+609	1217	medium	L_UPPERARM bone id 0x4C1 (see 607)
+610	1218	medium	L_FOREARM bone id 0x4C2 (see 607)
+611	418	high	L_THIGH bone id 0x1A2: literal in ped.rs (0x1A2|0x1A3|0x1A7|0x1A8 limbs, 0x1A4|0x1A9 feet) and exe int table index 405 + 13
+612	419	high	L_CALF bone id 0x1A3
+613	420	high	L_FOOT bone id 0x1A4
+614	423	high	R_THIGH bone id 0x1A7 (table: 5 entries after L_THIGH)
+615	424	high	R_CALF bone id 0x1A8
+616	425	high	R_FOOT bone id 0x1A9
+649	1.05	medium	animblend LIST_SLACK: weights sum in [1, 1.05]; bigstairs top block half-depth: -0.45 + kv = first step edge 0.75 - 0.15
+667	2400	medium	control offset = kv661 + 12*index; aim/lock is control 6. Base 2328 fixed by slot 694 = 3072 and slot 42 = 3000 (control 56)
+690	3036	medium	melee-mapper control 59 (reset table lists 59,60,61,85,62,63 in the binding order 690..695): 2328 + 12*59
+691	3048	medium	control 60: 2328 + 12*60
+692	3060	medium	control 61: 2328 + 12*61
+693	3348	medium	control 85 (the odd one, 4th in both lists): 2328 + 12*85
+694	3072	medium	control 62; exe location sits in a 512,768,1024,1536,2048,3072,4096,... table exactly at the 3072 place (neighbours: slot 180 = 1536, 722 = 2048)
+695	3084	medium	control 63: 2328 + 12*63
+722	2048	high	0x800: vehicle flag noambocc / ped flag onfoot between 1024 and 4096; archive block size used_blocks * 2048
+753	250.0	medium	engine fire steps -250,-500,-750,-1000(kv82),...; wrecking ball 250 kg; rotten plank holds 250..500 N; lift impulse
+754	500.0	medium	second fire step; wheel share: damage < 100 -> 0.1, < 500 -> 0.5 (of 1000); rotten plank upper hold
+776	1200	low	SPINE bone id 0x4B0: ids count spine,spine1..3,neck,head = 0x4B0..0x4B5 (head 1205); exe array lists them in that order
+928	1.25	low	melee seek stop distance (stage 0, with 3.5) and pistol hold time to full spread (smg 1.5, ak47 3.0); real value unknown
+930	35.0	low	skate-park kicker angle in degrees (len 1.6 m) and an unused melee turn speed; not 15/20/25/30/40 (other slots)
+1075	65539	low	UPPER_BODY clip-flags constant, never read by the code; placeholder (not a single bit: every power of two up to 2^33 is another slot)
+1076	65541	low	HEAD_NECK_AND_ARMS clip-flags constant, never read by the code; placeholder
+1077	9216	low	ROTATES_ROOT clip-flags constant, never read by the code; placeholder
+1078	12288	medium	carries_turn mask 0x3000: exe location is the 12288 place of the 512,768,...,8192,12288,16384 table (between 8192 = slot 52 and 16384 = slot 676)
+1079	3.3	low	quake platform x frequency in Hz (others 5.3, 4.6, 6.2, 1.9); pool rank 280: above slot 557, 8 entries below 4.18879
+1082	1.005	low	rope slack range (kv, 1.025): lower bound just above taut; real value unknown
+1085	18.0	low	lights hall near end y = -kv (far end 6): 7 panels 3 m apart end at -15.5; 16.0 is another slot, so 24 m hall; could be 16.5 or 17
+1087	3.8	low	fun-box ramps start at box half-length 2.0 + ramp run kv207 from the centre, so kv1087 = 2 + kv207 exactly (kv207 taken as 1.8)
+1089	1.26	low	portal-wall start point y (x = 2.52); hidden dev stage, real value unknown
+1090	2.75	high	rooftop block centre y -2.25, edge at EDGE = 0.5 (literal in main.rs ledge()) => half-depth 2.75
+1093	0.005	low	zebra-crossing stripe half-thickness (1 cm proud of the road); real value unknown
+1094	10000.0	low	half-size of the physics floor slab under the room; exe location is among early vector constants; any large value works
+1095	3.75	high	glass wall: 16 panes 0.5 m apart from -kv are centred on 0 only for 3.75; stairs sit at x = -3.75

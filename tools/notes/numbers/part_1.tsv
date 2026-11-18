@@ -1,0 +1,21 @@
+3	3.4028235e38	medium	FLT_MAX: fallback of every 'if x != 0 { 1/x } else { kv }' (RAGE InvertSafe default), rsqrt fallback, and RUN_MAX = no speed cap in route.rs
+4	1.0e-10	medium	tiny epsilon (NM_RS_FLOATEPS style): t/(period+eps) in nmfl/nmshot, safe_normalize test, pivot floor trace*eps; distinct from kv72=1e-4 used the same way in nmshot:731 and from known 1e-9 (kv76)
+5	3.0	high	Param docs '(3)' x5; stayUpright stiffness 3; angVelThreshold (1.2,3,1.2); box inertia m/3 and capsule (3r^2+l^2)/12
+8	0.65	high	headLook splits twist 'over' kv8 to spine3 + 0.35 (kv140) to spine2 = 1; braceDistance default (SDK 'arms_out_early' override 1.3 = 2x); arm reach cap 0.65 vs 0.55; melee TOO_CLOSE 0.65 m
+9	0.15	high	Param docs leanInDirMaxB (0.15), legRadius (0.15); stair blocks half-depth kv9 with pitch kv24=0.3 = 2*0.15; braceReachAbsorbtionTime 0.15
+10	0.45	high	BRAWLER_BODY legs 0.45 (docs); braceTargetPredictionTime 0.45; barrel half-height 0.45
+11	40.0	high	Param doc collisionAccelThreshold (40); braceGrabStrength 40; crate/part mass 40 kg; ankle stiffness 40
+12	1.5	high	Param docs (1.5) x4; BRAWLER head 1.5; grabReachAngle 1.5; pointSwingLimit 1.5
+13	1.75	high	PROFILES Average height 1.75 m (docs); bodyBalance elbow default; braceGrabHoldTimerH
+14	300.0	low	braceMaxTimeBeforeGunThreaten in ms (cast to i32, x0.001 s; range 0..kv14), single use; not 100/200/700/1000 which are other slots; plain guess of a short delay
+15	200.0	high	ped Health start/max (GTA IV peds start at 200, injured below kv26=100); braceMinTimeBetweenFireGun 200 ms; pad shake clamp(80,200); tyre threshold; force cap
+16	700.0	medium	engine fire ramps e*kv760 for -kv16<e<0 (RAGE ENGINE_DAMAGE_FIRE_FULL = -700, so kv760 = -1/700); braceMaxTimeBetweenFireGun ms range 200..700
+17	0.25	high	Param docs (0.25) x4; maxDistanceFromPelToHitPoint 0.25; somersaultAngleThreshold 0.25; legRadius 0.25
+18	0.75	high	bracePointArmStraightnessL..H = kv18..kv19(0.95) and code draws kv18 + 0.2*rand => 0.75; spine scale table 1,1,0.9,0.8,kv18,0.5,0.25 (0.7/0.6/0.65/0.55 are other slots); slow get-up rate, damping 0.75
+19	0.95	high	Param doc perStepReduction1 (0.95); bracePointArmStraightnessH = 0.75 + 0.2; Fat profile factor
+20	0.8	high	Param docs (0.8) x7; pointArm armStraightness 0.8; headLookAtWoundMaxTimer 0.8; pelvis-standing height test
+21	12.0	high	Param docs (12) many; setStiffness 12; legStiffness 12; inertia divisor /12
+24	0.3	high	Param docs (0.3) x17; stair pitch 0.3 = 2*kv9; spine weights 0.35+0.3+0.2+0.15 = 1 (nmbb:242)
+25	20.0	high	Param doc maxAcceleration (20); bullet_vel z 20; explosion impulse cap mass*20; health<20
+26	100.0	high	health percentages: INJURED_BELOW/ARMOUR_CAP/DYING 100; (100-relaxation)*0.01 and relaxation/100; grabHoldMaxTimer 100; floor half-size 100 m ('1 m squares'); x100 fixed-point in ide/ipl
+27	30.0	high	Param doc oriStiff (30); animation frames per second (duration*30, FRAME = 1/30); ROCKET_SPEED 30

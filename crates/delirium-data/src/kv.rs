@@ -44,6 +44,45 @@ pub fn unlock(prog: &[u8]) -> bool {
     true
 }
 
+/// MODIFIED (not in the original): our own numbers, for running with no game. `kv-own.txt` has one `slot value`
+/// line for each number the release reads from the game's program; they were worked out from how this source
+/// uses each one, so they are stand-ins, not the game's, and he moves differently with them.
+static OWN: AtomicBool = AtomicBool::new(false);
+static OWN_TABLE: &str = include_str!("kv-own.txt");
+
+/// Opens the numbers from our own table (`kv-own.txt`, or `text` to try another): the slots left without a value.
+pub fn unlock_own(text: Option<&str>) -> Vec<usize> {
+    if OPEN.load(Relaxed) { return vec![] }
+    let le = |b: &[u8], at: usize, k: usize| b[at..at + k].iter().rev().fold(0u64, |v, &x| v << 8 | x as u64);
+    let mut own: Vec<Option<f64>> = vec![None; N];
+    for l in text.unwrap_or(OWN_TABLE).lines() {
+        let mut w = l.split('#').next().unwrap_or("").split_whitespace();
+        let (Some(i), Some(v)) = (w.next().and_then(|i| i.parse::<usize>().ok()), w.next()) else { continue };
+        let v = match v.strip_prefix("0x") {
+            Some(h) => u64::from_str_radix(h, 16).ok().map(|x| x as f64),
+            None => v.parse::<f64>().ok(),
+        };
+        if i < N { own[i] = v }
+    }
+    let mut missing = vec![];
+    for (i, r) in MAPS[0][44..].chunks(13).enumerate() {
+        let (w, h) = match (r[0] & 0x7f, own[i]) {
+            (0, _) => (le(r, 1, 8), le(r, 9, 4) as u32),
+            (_, None) => { missing.push(i); (0, 0) }
+            (2, Some(v)) => { let h = (v as f32).to_bits(); (wide(h, r[5]), h) }
+            (3, Some(v)) => (v.to_bits(), (v as f32).to_bits()),
+            (_, Some(v)) => { let h = v as i64 as u32; (h as u64, h) }
+        };
+        K64[i].store(w, Relaxed);
+        K32[i].store(h, Relaxed);
+    }
+    OWN.store(true, Relaxed);
+    OPEN.store(true, Relaxed);
+    missing
+}
+/// The numbers are our own stand-ins (`unlock_own`), not the game's.
+pub fn own() -> bool { OWN.load(Relaxed) }
+
 /// A decimal's 64-bit word from its 32-bit one: widened (0), or its shortest decimal (1) or 9 digits (2) read as a double.
 fn wide(h: u32, how: u8) -> u64 {
     let f = f32::from_bits(h);

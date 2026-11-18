@@ -162,6 +162,32 @@ pub unsafe extern "C" fn nm_unlock(exe_path: *const c_char) -> i32 {
     if delirium_data::kv::unlock(&d) { 0 } else { fail(NM_E_STATE, format!("nm_unlock: {p} isn't a version the numbers are read from (the Steam GTAIV.exe or the disc's default.xex)")) }
 }
 
+/// MODIFIED (not in the original): our own stand-ins, for an SDK that starts with no game (docs/no-game.md): the
+/// character (`homer-own.json`) and the task settings (`taskparams-own.txt`) the no-game Playroom uses.
+static OWN_CHARACTER: &str = include_str!("../../delirium-room/src/homer-own.json");
+static OWN_TASKPARAMS: &str = include_str!("../../delirium-room/src/taskparams-own.txt");
+
+/// MODIFIED (not in the original): opens the numbers from our own stand-in table instead of the game's program
+/// (`numbers`: the text of another `slot value` table, or null for the built-in `kv-own.txt`), and takes our own
+/// stand-in task settings unless some were loaded. Returns how many slots have no value (0 for the built-in table).
+/// Numbers already opened (from a game, or by an earlier call) are kept.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn nm_unlock_own(numbers: *const c_char) -> i32 {
+    let missing = if delirium_data::kv::open() { 0 } else { delirium_data::kv::unlock_own(unsafe { text(numbers) }).len() as i32 };
+    let mut tp = TP.write().unwrap_or_else(|e| e.into_inner());
+    if tp.is_none() {
+        *tp = Some(delirium_data::taskparams::read(OWN_TASKPARAMS));
+    }
+    missing
+}
+
+/// MODIFIED (not in the original): the built-in stand-in character (`homer-own.json`, nm-character-1) as text, for
+/// nm_init_character / nm_build_from_character. Returns the length needed with its NUL, as nm_last_error.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn nm_own_character(buf: *mut c_char, len: i32) -> i32 {
+    unsafe { put(OWN_CHARACTER, buf, len) }
+}
+
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn nm_load_task_params(path: *const c_char) -> i32 {
     let Some(p) = (unsafe { text(path) }) else { return fail(NM_E_ARG, "nm_load_task_params: no path") };
