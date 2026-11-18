@@ -52,15 +52,43 @@ It is the real Delirium engine code running, on stand-in data. So, honestly:
 
 ## Play it
 
-**Windows**
+**Windows, ready-built (nothing to install)**
+
+1. Download `delirium-no-game-<version>-windows.zip` from the latest [release](../../releases/latest).
+2. Unpack it anywhere.
+3. Double-click **`Play Delirium (no game).bat`**.
+
+**Build it yourself**
 
 1. Download this repository (green **Code** button → **Download ZIP**) and unpack it, or clone it.
-2. Double-click **`Play Delirium (no game).bat`**.
-3. The first run builds the room, which takes a few minutes and needs [Rust](https://rustup.rs) and Microsoft's free
-   C++ build tools. After that it starts in seconds.
+2. Double-click **`Play Delirium (no game).bat`**. The first run builds the room, which takes a few minutes and needs
+   [Rust](https://rustup.rs) and Microsoft's free C++ build tools. After that it starts in seconds.
 
 Building by hand on any system: `cargo build --release -p delirium-room`, then run `target/release/delirium-room`
 with no arguments. Only Windows has been tried with this fork.
+
+## Open source: change it, improve it
+
+Everything here is open source under the GPL-3.0, and the ready-built download is made from exactly the code in this
+repository. You are welcome to fork it and make it better.
+
+1. Click **Fork** at the top of this page, then clone your fork.
+2. Change the code and rebuild with `cargo build --release -p delirium-room` (a few minutes the first time, quicker
+   after).
+3. Share it: open a pull request here, or publish your own fork. Keep the GPL-3.0 license, keep the source public,
+   and say that your version is modified.
+
+Good places to start:
+
+- **The stand-in numbers** (`crates/delirium-data/src/kv-own.txt`): every line says how sure it is. About 270 are
+  medium or low confidence, and better values make Homer move better.
+- **The stand-in body** (`tools/make_character.py`): masses, joint limits and muscle strengths are estimates.
+- **Animations** (`crates/delirium-room/src/getup.rs`): the get-ups, walk, run and punch. The Hero's fight moves are
+  still missing.
+- **The untested parts**: grabbing, climbing, the taxi, the other stages.
+
+One rule to keep the project clean: **never add GTA IV files, or numbers taken out of them.** The point of this fork
+is that it needs none.
 
 ## What Delirium is
 
