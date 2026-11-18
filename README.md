@@ -6,11 +6,8 @@
 </p>
 
 <p align="center">
-  <img src="docs/no-game-stumble.gif" alt="Homer is shoved twice, stumbles, catches himself and stands again" width="440">
-</p>
-<p align="center">
-  <img src="docs/no-game-getup-front.gif" alt="Homer gets up from lying on his front" width="330">
-  <img src="docs/no-game-getup-back.gif" alt="Homer gets up from lying on his back" width="330">
+  <img src="docs/no-game-moves.gif" alt="Moves: drunk, stagger, windmill, electrocute, flinch, ice" width="400">
+  <img src="docs/no-game-action.gif" alt="Action: shove, knocked down, shot, blast, wrecking ball, high fall" width="400">
 </p>
 <p align="center"><sub>Everything above was filmed in this fork with no game files present.</sub></p>
 
@@ -46,7 +43,8 @@ It is the real Delirium engine code running, on stand-in data. So, honestly:
   from his front and his back, drunk, stagger, electrocute, flinch, ice, being thrown by a blast, pistol damage.
 - **Missing without the game:** the Hero's fight moves (there is one plain punch instead) and each weapon's own
   reaction settings.
-- **Not tested here:** grabbing, climbing, the taxi, the other stages and Portal mode.
+- **Also seen working** (in the clips above): the wrecking ball and the high fall.
+- **Not tested here:** grabbing, climbing, the other stages and Portal mode. The taxi did not appear in a quick try.
 - **Want the real thing?** Point it at your own GTA IV exactly as the original does (`--game <folder>`). This fork
   still supports that, and then uses the game's data instead of the stand-ins.
 
