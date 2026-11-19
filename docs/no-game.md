@@ -1,7 +1,7 @@
 # Running Delirium with no game files (this modified copy)
 
 This folder is a **modified copy** of Delirium Physics 0.7.0 (GPL-3.0-only, source from
-github.com/PVCPC/delirium-physics, commit 41db26f). The change: the Playroom starts **without Grand Theft Auto IV**.
+github.com/PVCPC/delirium-physics, commit 41db26f). The change: the Playroom starts **with no game assets**.
 Everything else is Delirium's own: its engine, its Playroom, its stage, taxi, textures, sky, sounds and panels.
 
 Start it with `Play Delirium (no game).bat`.
@@ -10,7 +10,7 @@ Start it with `Play Delirium (no game).bat`.
 
 | The original reads | From | Here |
 |---|---|---|
-| 706 numbers (the source says `kv!(13)` where a number goes) | `GTAIV.exe` | `crates/delirium-data/src/kv-own.txt` |
+| 706 numbers (the source says `kv!(13)` where a number goes) | the game's program file | `crates/delirium-data/src/kv-own.txt` |
 | The character: joint axes, limits, muscle strengths, part frames, masses | `fred.xrt` | `crates/delirium-room/src/homer-own.json` |
 | The body's shapes and standing pose | the game's ped model and idle clip | the same file's `build` section |
 | Weapons (push, damage, clip, rate) | `weaponinfo.xml` | the four weapons the SDK ships as its defaults (pistol, SMG, rifle, shotgun); the rest hit with a flat 50 N s |
@@ -66,7 +66,7 @@ Checked beside Delirium's own demo clips, filmed from the same side (`python too
 It is **not** exactly the real thing and cannot be shown to be: about 270 numbers are medium or low confidence,
 and the masses, joint limits and muscle strengths are estimates.
 
-To get the real thing, point Delirium at your own GTA IV as its README says (`--game <folder>`): this copy still
+To get the real thing, point Delirium at your own copy of the game as the original's README says (`--game <folder>`): this copy still
 does that, and then uses the game's numbers, character, weapons and settings instead of the stand-ins.
 
 ## How he and the room look
