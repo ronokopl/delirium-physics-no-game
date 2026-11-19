@@ -1,8 +1,7 @@
 Delirium Physics: No Game Needed  (ready-built for Windows)
 ============================================================
 
-Double-click "Play Delirium (no game).bat". No Grand Theft Auto IV and no other
-game files are needed.
+Double-click "Play Delirium (no game).bat". No game assets are required.
 
 If the room is slow or will not start, try:  delirium-room.exe --safe
 

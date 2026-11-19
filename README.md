@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>The Delirium active-ragdoll playroom, running with no game files at all.</b><br>
-  No Grand Theft Auto IV, no disc image, no assets to find. Build it and play.
+  No game assets required: nothing to own, nothing to find. Download it and play.
 </p>
 
 <p align="center">
@@ -14,15 +14,15 @@
 > [!NOTE]
 > **This is a modified fork of [Delirium Physics](https://github.com/PVCPC/delirium-physics)** (GPL-3.0-only), based on
 > its 0.7.0 source. It is not the original and is not made or endorsed by its authors. The one change: the original
-> needs your own copy of GTA IV to start, and this fork does not. What was changed, and how close the result is, is
+> needs files from a game you own to start, and this fork does not. What was changed, and how close the result is, is
 > written up in [docs/no-game.md](docs/no-game.md).
 
-## No assets required
+## No game assets required
 
-The original Delirium reads its numbers, its character, its animations and its weapon settings out of your own
-GTA IV. This fork ships its own stand-ins for all of them, so nothing has to be supplied:
+The original Delirium reads its numbers, its character, its animations and its weapon settings out of a game you
+have to own. This fork ships its own stand-ins for all of them, so nothing has to be supplied:
 
-| The original reads from GTA IV | This fork uses instead |
+| The original reads from the game | This fork uses instead |
 |---|---|
 | About 700 engine numbers | Our own table, worked out from Delirium's source and docs |
 | The character (joints, limits, muscles, masses, shapes) | Our own stand-in body, measured from Delirium's own pictures |
@@ -30,7 +30,7 @@ GTA IV. This fork ships its own stand-ins for all of them, so nothing has to be 
 | Idle, walk, run, sprint, gun and punch animations | Our own, hand-written key poses |
 | Weapon and reaction settings | Our own estimates on top of the SDK's defaults |
 
-**No GTA IV file, and no number taken from one, is in this repository, and none was looked at to make it.**
+**No game file, and no number taken from one, is in this repository, and none was looked at to make it.**
 
 ### What to expect
 
@@ -45,8 +45,8 @@ It is the real Delirium engine code running, on stand-in data. So, honestly:
   reaction settings.
 - **Also seen working** (in the clips above): the wrecking ball and the high fall.
 - **Not tested here:** grabbing, climbing, the other stages and Portal mode. The taxi did not appear in a quick try.
-- **Want the real thing?** Point it at your own GTA IV exactly as the original does (`--game <folder>`). This fork
-  still supports that, and then uses the game's data instead of the stand-ins.
+- **Want the real thing?** Point it at your own copy of the game exactly as the original does (`--game <folder>`).
+  This fork still supports that, and then uses the game's data instead of the stand-ins.
 
 ## Play it
 
@@ -85,7 +85,7 @@ Good places to start:
   still missing.
 - **The untested parts**: grabbing, climbing, the taxi, the other stages.
 
-One rule to keep the project clean: **never add GTA IV files, or numbers taken out of them.** The point of this fork
+One rule to keep the project clean: **never add game files, or numbers taken out of them.** The point of this fork
 is that it needs none.
 
 ## What Delirium is
@@ -93,8 +93,8 @@ is that it needs none.
 A physics playground for an active ragdoll. Homer isn't animated. His muscles keep him standing, so he balances,
 stumbles, braces, flails and falls on his own. Push him, shoot him, throw things at him, or step in as Hero.
 
-Delirium is a reverse-engineered port of Euphoria, NaturalMotion's ragdoll and character physics engine, as it runs
-in GTA IV, rewritten in Rust by the [original project](https://github.com/PVCPC/delirium-physics). It comes with an
+Delirium is a reverse-engineered port of Euphoria, NaturalMotion's ragdoll and character physics engine, rewritten
+in Rust by the [original project](https://github.com/PVCPC/delirium-physics). It comes with an
 SDK (C, C++, C#, Python) and plugins for Unity, Unreal Engine 5 and Godot 4. Neither the original nor this fork is
 affiliated with or endorsed by Rockstar Games, Take-Two Interactive or NaturalMotion.
 
@@ -129,7 +129,7 @@ Choose reactions under **Reactions** in the left dock. Every shortcut is listed 
 
 Where the stand-ins live and how each was made: [docs/no-game.md](docs/no-game.md). The original's guides still
 apply to the engine itself: [Modding: start here](docs/start-here.md), [How it works](docs/how-it-works.md),
-[Modding](docs/modding.md). Those guides describe the original, including its GTA IV requirement for the SDK; this
+[Modding](docs/modding.md). Those guides describe the original, including its game-files requirement for the SDK; this
 fork changed the Playroom's start-up, and the SDK's requirement is described in [docs/no-game.md](docs/no-game.md).
 
 Generating new get-ups needs your own [Kimodo](https://github.com/nv-tlabs/kimodo) install (see

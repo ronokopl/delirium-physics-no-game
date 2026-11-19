@@ -1,5 +1,5 @@
 @echo off
-rem MODIFIED version of Delirium Physics: starts the Playroom with NO Grand Theft Auto IV files.
+rem MODIFIED version of Delirium Physics: starts the Playroom with NO game files.
 rem Source code (GPL-3.0-only): https://github.com/ronokopl/delirium-physics-no-game
 cd /d "%~dp0"
 "delirium-room.exe" %*

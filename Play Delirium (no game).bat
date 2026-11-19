@@ -1,5 +1,5 @@
 @echo off
-rem MODIFIED copy of Delirium Physics: starts the Playroom with NO Grand Theft Auto IV files.
+rem MODIFIED copy of Delirium Physics: starts the Playroom with NO game files.
 rem The numbers and the body it runs on are stand-ins worked out from the source (see docs\no-game.md),
 rem not the game's, so Homer moves differently from the real Delirium.
 cd /d "%~dp0"
